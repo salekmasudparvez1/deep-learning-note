@@ -1,0 +1,824 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f7f8fa" />
+    <meta
+      name="description"
+      content="Parvez AI Engineer Routine — track your AI/ML interview prep with timestamps and performance graph."
+    />
+    <title>Parvez AI Eng Routine · tracker</title>
+    <style>
+      :root {
+        --bg: #f7f8fa;
+        --card: #fff;
+        --ink: #17202b;
+        --muted: #687383;
+        --line: #e7eaf0;
+        --accent: #2563eb;
+        --accent-soft: #eff6ff;
+        --green: #12805c;
+        --shadow: 0 10px 30px rgba(22, 34, 51, 0.045);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font:
+          15px/1.55 Inter,
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      .wrap {
+        max-width: 1100px;
+        margin: auto;
+        padding: 0 24px;
+      }
+
+      header {
+        border-bottom: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.82);
+      }
+      .nav {
+        height: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        font-weight: 750;
+        letter-spacing: -0.03em;
+      }
+      .mark {
+        width: 35px;
+        height: 35px;
+        border-radius: 11px;
+        background: var(--ink);
+        color: white;
+        display: grid;
+        place-items: center;
+        font-size: 13px;
+        letter-spacing: -0.04em;
+      }
+      .navlinks {
+        display: flex;
+        gap: 22px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .navlinks a:hover {
+        color: var(--accent);
+      }
+
+      .hero {
+        padding: 55px 0 30px;
+      }
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--green);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #16a34a;
+      }
+      .hero h1 {
+        font-size: clamp(34px, 5vw, 54px);
+        letter-spacing: -0.055em;
+        line-height: 1.08;
+        margin: 15px 0 13px;
+        max-width: 700px;
+      }
+      .hero p {
+        color: var(--muted);
+        font-size: 16px;
+        max-width: 650px;
+        margin: 0;
+      }
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 24px;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        border-radius: 10px;
+        padding: 11px 15px;
+        font-weight: 650;
+        font-size: 13px;
+        border: 1px solid var(--line);
+        background: white;
+        transition:
+          transform 0.15s,
+          border-color 0.15s;
+      }
+      .btn:hover {
+        transform: translateY(-1px);
+        border-color: #b7c5dc;
+      }
+      .btn.primary {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #fff;
+      }
+      .btn.primary:hover {
+        background: #1d4ed8;
+      }
+
+      .section {
+        padding: 24px 0 14px;
+      }
+      .section-head {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+      }
+      .section h2 {
+        font-size: 20px;
+        letter-spacing: -0.035em;
+        margin: 0;
+      }
+      .section-head p {
+        color: var(--muted);
+        font-size: 13px;
+        margin: 4px 0 0;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: var(--shadow);
+        min-width: 0;
+      }
+      .card-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      .icon {
+        width: 38px;
+        height: 38px;
+        display: grid;
+        place-items: center;
+        border-radius: 11px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-weight: 800;
+        font-size: 13px;
+      }
+      .tag {
+        font-size: 11px;
+        padding: 4px 8px;
+        border-radius: 99px;
+        background: #f3f5f8;
+        color: #657184;
+        font-weight: 650;
+      }
+      .card h3 {
+        font-size: 16px;
+        letter-spacing: -0.02em;
+        margin: 15px 0 6px;
+      }
+      .card p {
+        font-size: 13px;
+        color: var(--muted);
+        margin: 0 0 16px;
+        min-height: 40px;
+      }
+      .card-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        color: var(--accent);
+        font-size: 13px;
+        font-weight: 700;
+      }
+      .card-link:hover {
+        text-decoration: underline;
+      }
+
+      .routine {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      .routine-card {
+        background: white;
+        border: 1px solid var(--line);
+        border-radius: 15px;
+        padding: 20px;
+      }
+      .routine-card h3 {
+        margin: 0 0 4px;
+        font-size: 15px;
+      }
+      .routine-card .sub {
+        font-size: 12px;
+        color: var(--muted);
+        margin: 0 0 14px;
+      }
+      .task {
+        display: flex;
+        gap: 11px;
+        align-items: flex-start;
+        padding: 11px 0;
+        border-top: 1px solid #f0f2f5;
+      }
+      .task input {
+        accent-color: var(--accent);
+        margin-top: 4px;
+        width: 15px;
+        height: 15px;
+        flex: 0 0 auto;
+        cursor: pointer;
+      }
+      .task label {
+        font-size: 13px;
+        cursor: pointer;
+        flex: 1;
+      }
+      .task small {
+        display: block;
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 2px;
+      }
+      .task.done label {
+        text-decoration: line-through;
+        color: #8a94a3;
+      }
+
+      .sheet {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 15px;
+        padding: 21px;
+        box-shadow: var(--shadow);
+        flex-wrap: wrap;
+      }
+      .sheet-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .sheet-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: #eaf8ef;
+        color: #16803c;
+        display: grid;
+        place-items: center;
+        font-weight: 800;
+      }
+      .sheet h3 {
+        margin: 0 0 4px;
+        font-size: 15px;
+      }
+      .sheet p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      /* performance panel */
+      .perf-panel {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 15px;
+        padding: 20px 20px 18px;
+        box-shadow: var(--shadow);
+        margin-top: 18px;
+      }
+      .perf-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 12px;
+      }
+      .perf-head h3 {
+        margin: 0;
+        font-size: 16px;
+        letter-spacing: -0.02em;
+      }
+      .filter-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .filter-row label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .filter-row input[type="date"] {
+        font: inherit;
+        padding: 7px 10px;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        background: #fff;
+        color: var(--ink);
+      }
+      .perf-stats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 18px 32px;
+        margin: 6px 0 14px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .perf-stats b {
+        color: var(--ink);
+        font-size: 15px;
+        margin-left: 4px;
+      }
+      .chart-wrap {
+        position: relative;
+        height: 180px;
+        margin-top: 6px;
+      }
+      .chart-wrap canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      .empty-chart {
+        display: grid;
+        place-items: center;
+        height: 100%;
+        color: #9aa5b5;
+        font-size: 13px;
+        border: 1px dashed var(--line);
+        border-radius: 10px;
+      }
+      .error-banner {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #b91c1c;
+        padding: 10px 14px;
+        border-radius: 10px;
+        font-size: 13px;
+        margin-bottom: 14px;
+        display: none;
+      }
+
+      footer {
+        padding: 35px 0 28px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .footer-inner {
+        border-top: 1px solid var(--line);
+        padding-top: 18px;
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      @media (max-width: 760px) {
+        .grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .navlinks {
+          gap: 12px;
+        }
+        .hero {
+          padding-top: 42px;
+        }
+        .chart-wrap {
+          height: 150px;
+        }
+      }
+      @media (max-width: 540px) {
+        .wrap {
+          padding: 0 16px;
+        }
+        .nav {
+          height: 64px;
+        }
+        .navlinks a:nth-child(2) {
+          display: none;
+        }
+        .grid,
+        .routine {
+          grid-template-columns: 1fr;
+        }
+        .hero h1 {
+          font-size: 38px;
+        }
+        .card p {
+          min-height: 0;
+        }
+        .sheet {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+        .section-head {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+        .filter-row {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="wrap nav">
+        <a class="brand" href="#" aria-label="Parvez AI Eng Routine home"
+          ><span class="mark">PA</span><span>Parvez AI Eng Routine</span></a
+        >
+        <nav class="navlinks" aria-label="Main navigation">
+          <a href="#resources">Resources</a>
+          <a href="#routine">Routine</a>
+          <a href="#tracker">Problem tracker</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <!-- hero -->
+      <section class="hero">
+        <span class="eyebrow"
+          ><span class="dot"></span> Personal learning dashboard</span
+        >
+        <h1>Prepare with focus.<br />Build interview confidence.</h1>
+        <p>
+          A simple home for AI/ML interview resources, hands-on coding practice,
+          and your daily study routine. Keep it consistent, one problem at a
+          time.
+        </p>
+        <div class="hero-actions">
+          <a
+            class="btn primary"
+            href="https://leetml.org/"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Practice on LeetML ↗</a
+          >
+          <a
+            class="btn"
+            href="https://docs.google.com/spreadsheets/d/1bp1rbBAdUY1kVHD86aSO1NHAPJ9pfE8S2DT0N_4G_9A/edit?usp=sharing"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Open Excel problem tracker ↗</a
+          >
+        </div>
+      </section>
+
+      <!-- error banner -->
+      <div id="errorBanner" class="error-banner"></div>
+
+      <!-- resources -->
+      <section class="section" id="resources">
+        <div class="section-head">
+          <div>
+            <h2>Interview resources</h2>
+            <p>Curated links for real-world preparation and practice.</p>
+          </div>
+        </div>
+        <div class="grid">
+          <article class="card">
+            <div class="card-top">
+              <span class="icon">AI</span><span class="tag">Guide · 2026</span>
+            </div>
+            <h3>AIMLInterviews</h3>
+            <p>
+              Structured AI/ML interview guide covering ML fundamentals, coding,
+              GenAI, system design, and more.
+            </p>
+            <a
+              class="card-link"
+              href="https://github.com/alirezadir/AIMLInterviews"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Explore guide ↗</a
+            >
+          </article>
+          <article class="card">
+            <div class="card-top">
+              <span class="icon">ML</span><span class="tag">Question bank</span>
+            </div>
+            <h3>MLQuestions</h3>
+            <p>
+              A community-curated collection of machine-learning interview
+              questions and study material.
+            </p>
+            <a
+              class="card-link"
+              href="https://github.com/topics/machine-learning-interview-questions"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Browse questions ↗</a
+            >
+          </article>
+          <article class="card">
+            <div class="card-top">
+              <span class="icon">★</span><span class="tag">Curated</span>
+            </div>
+            <h3>Awesome AI Interviews</h3>
+            <p>
+              A collection of AI interview resources to discover additional
+              topics and preparation material.
+            </p>
+            <a
+              class="card-link"
+              href="https://github.com/JustInCache/awesome-ai-interviews"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Open collection ↗</a
+            >
+          </article>
+          <article class="card">
+            <div class="card-top">
+              <span class="icon">DL</span><span class="tag">Reference</span>
+            </div>
+            <h3>AI/ML/DL Interview Resources</h3>
+            <p>
+              Reference links and learning resources spanning AI, machine
+              learning, and deep learning.
+            </p>
+            <a
+              class="card-link"
+              href="https://github.com/DengZhiyuan-math/awesome-ai-ml-dl-interview-resources/blob/main/README.md"
+              target="_blank"
+              rel="noopener noreferrer"
+              >View resources ↗</a
+            >
+          </article>
+          <article class="card">
+            <div class="card-top">
+              <span class="icon">LC</span><span class="tag">Community</span>
+            </div>
+            <h3>LeetCode Discuss</h3>
+            <p>
+              Search candidate-shared interview experiences, company rounds, and
+              technical discussions.
+            </p>
+            <a
+              class="card-link"
+              href="https://leetcode.com/discuss/"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Read discussions ↗</a
+            >
+          </article>
+          <article class="card">
+            <div class="card-top">
+              <span class="icon">EXP</span><span class="tag">Example</span>
+            </div>
+            <h3>Candidate Interview Report</h3>
+            <p>
+              An example machine-learning engineer interview experience shared
+              on LeetCode Discuss.
+            </p>
+            <a
+              class="card-link"
+              href="https://leetcode.com/discuss/post/7405614/linkedin-software-engineer-machine-learn-l9pd/"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Read experience ↗</a
+            >
+          </article>
+          <article class="card">
+            <div class="card-top">
+              <span class="icon">LM</span><span class="tag">Practice</span>
+            </div>
+            <h3>LeetML</h3>
+            <p>
+              Practice ML coding, algorithms, LLMs, statistics, SQL, and ML
+              system-design questions.
+            </p>
+            <a
+              class="card-link"
+              href="https://leetml.org/problems.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Solve problems ↗</a
+            >
+          </article>
+          <article class="card">
+            <div class="card-top">
+              <span class="icon">ENG</span><span class="tag">AI Engineer</span>
+            </div>
+            <h3>Awesome AI Engineer Interview</h3>
+            <p>
+              Interview preparation links and topics specifically useful for AI
+              engineering roles.
+            </p>
+            <a
+              class="card-link"
+              href="https://github.com/landedjobs/awesome-ai-engineer-interview"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Open repository ↗</a
+            >
+          </article>
+          <article class="card">
+            <div class="card-top">
+              <span class="icon">GL</span
+              ><span class="tag">Company reports</span>
+            </div>
+            <h3>Glassdoor Interviews</h3>
+            <p>
+              Look up company-specific interview reports and questions.
+              Availability varies by company.
+            </p>
+            <a
+              class="card-link"
+              href="https://www.glassdoor.com/Interview/index.htm"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Search interviews ↗</a
+            >
+          </article>
+        </div>
+      </section>
+
+      <!-- tracker -->
+      <section class="section" id="tracker">
+        <div class="section-head">
+          <div>
+            <h2>Problem tracker</h2>
+            <p>Keep your solved questions and progress in one place.</p>
+          </div>
+        </div>
+        <div class="sheet">
+          <div class="sheet-left">
+            <div class="sheet-icon">✓</div>
+            <div>
+              <h3>AI Engineer — Excel / Google Sheets problem list</h3>
+              <p>
+                Your linked spreadsheet for tracking coding problems and study
+                progress.
+              </p>
+            </div>
+          </div>
+          <a
+            class="btn primary"
+            href="https://docs.google.com/spreadsheets/d/1bp1rbBAdUY1kVHD86aSO1NHAPJ9pfE8S2DT0N_4G_9A/edit?usp=sharing"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Open spreadsheet ↗</a
+          >
+        </div>
+      </section>
+
+      <!-- routine + performance -->
+      <section class="section" id="routine">
+        <div class="section-head">
+          <div>
+            <h2>Daily routine</h2>
+            <p>
+              Check tasks as you complete them. Every action is timestamped and
+              saved to <code>api.json</code>.
+            </p>
+          </div>
+        </div>
+        <div class="routine">
+          <div class="routine-card">
+            <h3>Core preparation</h3>
+            <p class="sub">
+              Build fundamentals before moving to harder questions.
+            </p>
+            <div class="task" data-task-id="t1">
+              <input type="checkbox" id="t1" /><label for="t1"
+                >DSA / coding practice<small
+                  >1–2 problems; explain time and space complexity.</small
+                ></label
+              >
+            </div>
+            <div class="task" data-task-id="t2">
+              <input type="checkbox" id="t2" /><label for="t2"
+                >Machine learning fundamentals<small
+                  >Review one concept and answer it out loud.</small
+                ></label
+              >
+            </div>
+            <div class="task" data-task-id="t3">
+              <input type="checkbox" id="t3" /><label for="t3"
+                >Math, probability, and statistics<small
+                  >Practice a small calculation or reasoning question.</small
+                ></label
+              >
+            </div>
+          </div>
+          <div class="routine-card">
+            <h3>Applied AI engineering</h3>
+            <p class="sub">
+              Connect concepts to implementation and production systems.
+            </p>
+            <div class="task" data-task-id="t4">
+              <input type="checkbox" id="t4" /><label for="t4"
+                >ML coding / PyTorch / NumPy<small
+                  >Implement or debug one small component.</small
+                ></label
+              >
+            </div>
+            <div class="task" data-task-id="t5">
+              <input type="checkbox" id="t5" /><label for="t5"
+                >LLMs, RAG, or AI system design<small
+                  >Draw one architecture and explain trade-offs.</small
+                ></label
+              >
+            </div>
+            <div class="task" data-task-id="t6">
+              <input type="checkbox" id="t6" /><label for="t6"
+                >Review and record mistakes<small
+                  >Write down what went wrong and revisit it.</small
+                ></label
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- performance panel with chart -->
+        <div class="perf-panel">
+          <div class="perf-head">
+            <h3>📈 Performance over time</h3>
+            <div class="filter-row">
+              <label>From <input type="date" id="filterFrom" /></label>
+              <label>To <input type="date" id="filterTo" /></label>
+              <button class="btn" id="resetFilter" style="padding: 7px 12px">
+                Reset
+              </button>
+            </div>
+          </div>
+
+          <div class="perf-stats">
+            <span>Total tasks completed <b id="statTotal">0</b></span>
+            <span>Active days <b id="statDays">0</b></span>
+            <span>Current streak <b id="statStreak">0</b> days</span>
+          </div>
+
+          <div class="chart-wrap">
+            <canvas id="perfChart"></canvas>
+            <div id="chartEmpty" class="empty-chart" style="display: none">
+              No data yet — check a task to start tracking.
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="wrap footer-inner">
+        <span>© <span id="year"></span> Parvez AI Eng Routine</span
+        ><span>Simple routine. Consistent practice. Better interviews.</span>
+      </div>
+    </footer>
+
+    <script src="server_script.js"></script>
+  </body>
+</html>
