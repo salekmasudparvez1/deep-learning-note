@@ -34,7 +34,7 @@
         <section class="card topics"><h2>Routine topics</h2><p class="sub">Edit the content that appears on the public daily routine page.</p><div id="groups"></div></section>
       </div>
     </main>
-    <footer class="wrap">Your routine is stored in <code>api.json</code> and shared with the frontend.</footer>
+    <footer class="wrap">Routine data is shared through the production API and persistent storage.</footer>
     <script>
       const API="/api";let DATA=null;const $=id=>document.getElementById(id);
       function escapeHtml(value){return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}

@@ -1,16 +1,56 @@
 // server_script.js  →  deployed as /api (via vercel.json rewrite)
 import fs from "fs";
 import path from "path";
-import { fileURLToPath } from "url";
+import initialData from "./api/data.json" with { type: "json" };
 
-const DATA_FILE = path.join(path.dirname(fileURLToPath(import.meta.url)), "api.json");
+const DATA_FILE = path.join(process.cwd(), "api", "data.json");
+const KV_URL = process.env.KV_REST_API_URL;
+const KV_TOKEN = process.env.KV_REST_API_TOKEN;
+const KV_KEY = "parvez-ai-routine";
 
-function readData() {
-  const raw = fs.readFileSync(DATA_FILE, "utf8");
-  return JSON.parse(raw);
+async function readData() {
+  if (KV_URL && KV_TOKEN) {
+    const response = await fetch(KV_URL, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${KV_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(["GET", KV_KEY]),
+    });
+    if (!response.ok) throw new Error(`KV read failed with HTTP ${response.status}`);
+    const result = await response.json();
+    return result.result ? JSON.parse(result.result) : structuredClone(initialData);
+  }
+
+  try {
+    const raw = fs.readFileSync(DATA_FILE, "utf8");
+    return JSON.parse(raw);
+  } catch {
+    return structuredClone(initialData);
+  }
 }
 
-function writeData(data) {
+async function writeData(data) {
+  if (KV_URL && KV_TOKEN) {
+    const response = await fetch(KV_URL, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${KV_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(["SET", KV_KEY, JSON.stringify(data)]),
+    });
+    if (!response.ok) throw new Error(`KV write failed with HTTP ${response.status}`);
+    return;
+  }
+
+  if (process.env.VERCEL) {
+    throw new Error(
+      "Production storage is not configured. Add KV_REST_API_URL and KV_REST_API_TOKEN.",
+    );
+  }
+
   fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), "utf8");
 }
 
@@ -45,7 +85,7 @@ export default async function handler(req, res) {
 
   let data;
   try {
-    data = readData();
+    data = await readData();
   } catch (error) {
     res.status(500).json({ error: `api.json is missing or invalid: ${error.message}` });
     return;
@@ -73,7 +113,7 @@ export default async function handler(req, res) {
       };
       if (!Array.isArray(data.records)) data.records = [];
       data.records.push(entry);
-      writeData(data);
+      await writeData(data);
       res.status(200).json({ ok: true, entry, records: data.records });
       return;
     }
@@ -86,7 +126,7 @@ export default async function handler(req, res) {
       }
       const group = { id: makeId("group"), title: title.trim(), subtitle: subtitle.trim(), tasks: [] };
       data.routine.groups = [...(data.routine.groups || []), group];
-      writeData(data);
+      await writeData(data);
       res.status(201).json({ ok: true, group });
       return;
     }
@@ -100,7 +140,7 @@ export default async function handler(req, res) {
       }
       const task = { id: makeId("topic"), title: title.trim(), hint: hint.trim() };
       group.tasks = [...(group.tasks || []), task];
-      writeData(data);
+      await writeData(data);
       res.status(201).json({ ok: true, task });
       return;
     }
@@ -114,7 +154,7 @@ export default async function handler(req, res) {
       }
       result.task.title = title.trim();
       result.task.hint = hint.trim();
-      writeData(data);
+      await writeData(data);
       res.status(200).json({ ok: true, task: result.task });
       return;
     }
@@ -127,7 +167,7 @@ export default async function handler(req, res) {
       }
       result.group.tasks = result.group.tasks.filter((task) => task.id !== body.taskId);
       data.records = (data.records || []).filter((record) => record.taskId !== body.taskId);
-      writeData(data);
+      await writeData(data);
       res.status(200).json({ ok: true });
       return;
     }
