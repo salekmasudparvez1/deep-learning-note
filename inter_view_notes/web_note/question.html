@@ -1,0 +1,1314 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f7f8fc" />
+    <title>InterviewVault — Supabase-backed</title>
+    <style>
+      :root {
+        --bg: #f6f7fb;
+        --surface: #fff;
+        --surface-2: #f8f9fc;
+        --text: #182230;
+        --muted: #697586;
+        --line: #e7eaf0;
+        --primary: #635bdb;
+        --primary-dark: #5149c6;
+        --primary-soft: #efeeff;
+        --green: #16865b;
+        --green-soft: #e9f7f0;
+        --amber: #a86608;
+        --amber-soft: #fff5df;
+        --red: #c34444;
+        --shadow: 0 8px 30px rgba(24, 34, 48, 0.055);
+        --radius: 16px;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font:
+          14px/1.5 Inter,
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+      }
+      button,
+      input,
+      textarea,
+      select {
+        font: inherit;
+      }
+      button {
+        cursor: pointer;
+      }
+      .app {
+        display: grid;
+        grid-template-columns: 250px minmax(0, 1fr);
+        min-height: 100vh;
+      }
+      .sidebar {
+        background: #fff;
+        border-right: 1px solid var(--line);
+        padding: 25px 17px;
+        display: flex;
+        flex-direction: column;
+        gap: 28px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        padding: 0 9px;
+        font-weight: 750;
+        font-size: 17px;
+        letter-spacing: -0.4px;
+      }
+      .brand-icon {
+        height: 36px;
+        width: 36px;
+        border-radius: 11px;
+        background: var(--primary);
+        color: white;
+        display: grid;
+        place-items: center;
+        font-size: 18px;
+      }
+      .nav-label {
+        color: #9aa3b1;
+        font-size: 10px;
+        font-weight: 750;
+        letter-spacing: 1.2px;
+        padding: 0 11px;
+        margin-bottom: 8px;
+      }
+      .nav {
+        display: grid;
+        gap: 4px;
+      }
+      .nav button {
+        border: 0;
+        background: transparent;
+        color: #596576;
+        text-align: left;
+        padding: 10px 12px;
+        border-radius: 10px;
+        display: flex;
+        gap: 11px;
+        align-items: center;
+        font-weight: 550;
+      }
+      .nav button:hover,
+      .nav button.active {
+        background: var(--primary-soft);
+        color: var(--primary);
+      }
+      .nav .ico {
+        width: 19px;
+        text-align: center;
+        font-size: 16px;
+      }
+      .sidebar-bottom {
+        margin-top: auto;
+        border: 1px solid var(--line);
+        background: var(--surface-2);
+        padding: 14px;
+        border-radius: 13px;
+      }
+      .sidebar-bottom strong {
+        display: block;
+        font-size: 12px;
+        margin-bottom: 4px;
+      }
+      .sidebar-bottom p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 11px;
+      }
+      .main {
+        min-width: 0;
+      }
+      .topbar {
+        height: 72px;
+        background: rgba(255, 255, 255, 0.88);
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 34px;
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        backdrop-filter: blur(12px);
+      }
+      .breadcrumb {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .breadcrumb b {
+        color: var(--text);
+        font-weight: 650;
+      }
+      .top-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .avatar {
+        height: 34px;
+        width: 34px;
+        border-radius: 50%;
+        background: #e8e6ff;
+        color: var(--primary);
+        display: grid;
+        place-items: center;
+        font-weight: 750;
+      }
+      .content {
+        max-width: 1420px;
+        margin: auto;
+        padding: 34px;
+      }
+      .page-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 18px;
+        margin-bottom: 25px;
+      }
+      h1 {
+        font-size: 26px;
+        letter-spacing: -0.8px;
+        margin: 0 0 5px;
+      }
+      .subtitle {
+        color: var(--muted);
+        margin: 0;
+      }
+      .btn {
+        border: 1px solid var(--line);
+        background: #fff;
+        color: var(--text);
+        padding: 9px 14px;
+        border-radius: 10px;
+        font-weight: 650;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .btn:hover {
+        background: var(--surface-2);
+      }
+      .btn-primary {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: #fff;
+      }
+      .btn-primary:hover {
+        background: var(--primary-dark);
+      }
+      .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 15px;
+        margin-bottom: 24px;
+      }
+      .stat {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 17px 19px;
+        box-shadow: var(--shadow);
+      }
+      .stat-top {
+        display: flex;
+        justify-content: space-between;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .stat-icon {
+        height: 29px;
+        width: 29px;
+        border-radius: 9px;
+        background: var(--primary-soft);
+        color: var(--primary);
+        display: grid;
+        place-items: center;
+      }
+      .stat strong {
+        font-size: 25px;
+        display: block;
+        letter-spacing: -0.7px;
+        margin: 8px 0 1px;
+      }
+      .stat small {
+        color: var(--muted);
+        font-size: 11px;
+      }
+      .workspace {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 285px;
+        gap: 18px;
+        align-items: start;
+      }
+      .panel {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+      }
+      .panel-head {
+        padding: 18px 20px;
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+      }
+      .panel-head h2 {
+        font-size: 14px;
+        margin: 0;
+      }
+      .count {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .toolbar {
+        padding: 15px 20px;
+        display: flex;
+        gap: 9px;
+        border-bottom: 1px solid var(--line);
+        flex-wrap: wrap;
+      }
+      .search-wrap {
+        position: relative;
+        flex: 1;
+        min-width: 190px;
+      }
+      .search-wrap span {
+        position: absolute;
+        left: 12px;
+        top: 9px;
+        color: #929baa;
+      }
+      input,
+      select,
+      textarea {
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        background: #fff;
+        color: var(--text);
+        outline: none;
+      }
+      input:focus,
+      select:focus,
+      textarea:focus {
+        border-color: #a9a4f2;
+        box-shadow: 0 0 0 3px rgba(99, 91, 219, 0.1);
+      }
+      .search-wrap input {
+        width: 100%;
+        padding: 9px 12px 9px 34px;
+      }
+      .toolbar select {
+        padding: 9px 30px 9px 11px;
+        color: #596576;
+      }
+
+      /* ── NEW: taller, smooth-scrolling question list ──────────────────── */
+      .question-list {
+        padding: 5px 20px;
+        max-height: calc(100vh - 420px);
+        min-height: 480px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        scroll-behavior: smooth;
+        scrollbar-width: thin;
+        scrollbar-color: #c7c9d4 transparent;
+      }
+      .question-list::-webkit-scrollbar {
+        width: 10px;
+      }
+      .question-list::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .question-list::-webkit-scrollbar-thumb {
+        background: #d4d7e1;
+        border-radius: 8px;
+        border: 2px solid #fff;
+      }
+      .question-list::-webkit-scrollbar-thumb:hover {
+        background: #b9bccb;
+      }
+
+      .question {
+        padding: 20px 0;
+        border-bottom: 1px solid var(--line);
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 15px;
+      }
+      .question:last-child {
+        border-bottom: 0;
+      }
+      .q-meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
+      }
+      .tag {
+        font-size: 10px;
+        font-weight: 700;
+        padding: 4px 8px;
+        border-radius: 6px;
+        background: #f0f1f5;
+        color: #657083;
+      }
+      .tag.category {
+        background: var(--primary-soft);
+        color: var(--primary);
+      }
+      .tag.easy {
+        background: var(--green-soft);
+        color: var(--green);
+      }
+      .tag.medium {
+        background: var(--amber-soft);
+        color: var(--amber);
+      }
+      .tag.hard {
+        background: #fff0f0;
+        color: var(--red);
+      }
+      .question h3 {
+        font-size: 15px;
+        margin: 0 0 8px;
+        font-weight: 680;
+        line-height: 1.45;
+      }
+
+      /* ── NEW: bigger answer with its own smooth scroll ────────────────── */
+      .question .answer {
+        color: var(--muted);
+        font-size: 13px;
+        margin: 0;
+        line-height: 1.7;
+        max-height: 280px; /* taller readable area */
+        min-height: 60px;
+        overflow-y: auto;
+        padding: 10px 12px;
+        border-radius: 10px;
+        background: var(--surface-2);
+        border: 1px solid var(--line);
+        white-space: pre-wrap;
+        scroll-behavior: smooth;
+        scrollbar-width: thin;
+        scrollbar-color: #c7c9d4 transparent;
+      }
+      .question .answer::-webkit-scrollbar {
+        width: 8px;
+      }
+      .question .answer::-webkit-scrollbar-thumb {
+        background: #d4d7e1;
+        border-radius: 8px;
+      }
+      .question .answer::-webkit-scrollbar-thumb:hover {
+        background: #b9bccb;
+      }
+
+      .q-actions {
+        display: flex;
+        align-items: flex-start;
+        gap: 6px;
+      }
+      .icon-btn {
+        height: 31px;
+        width: 31px;
+        border: 1px solid var(--line);
+        background: #fff;
+        border-radius: 8px;
+        color: #748092;
+      }
+      .icon-btn:hover {
+        color: var(--primary);
+        border-color: #c9c6fa;
+      }
+      .status {
+        font-size: 10px;
+        border: 0;
+        border-radius: 6px;
+        padding: 5px 8px;
+        font-weight: 700;
+      }
+      .status.learned {
+        background: var(--green-soft);
+        color: var(--green);
+      }
+      .status.reviewing {
+        background: var(--amber-soft);
+        color: var(--amber);
+      }
+      .status.not-started {
+        background: #f0f1f5;
+        color: #687386;
+      }
+
+      .empty {
+        padding: 45px 15px;
+        text-align: center;
+        color: var(--muted);
+      }
+      .empty b {
+        display: block;
+        color: var(--text);
+        margin-bottom: 5px;
+      }
+      .loading {
+        padding: 45px 15px;
+        text-align: center;
+        color: var(--muted);
+      }
+
+      .right-col {
+        display: grid;
+        gap: 16px;
+      }
+      .side-panel {
+        padding: 18px;
+      }
+      .side-title {
+        font-size: 13px;
+        font-weight: 700;
+        margin: 0 0 15px;
+      }
+      .category-list {
+        display: grid;
+        gap: 13px;
+      }
+      .category-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 8px;
+        align-items: center;
+      }
+      .category-name {
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .category-count {
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .bar {
+        grid-column: 1/-1;
+        height: 5px;
+        background: #f0f1f5;
+        border-radius: 9px;
+        overflow: hidden;
+        margin-top: -4px;
+      }
+      .bar i {
+        display: block;
+        height: 100%;
+        background: var(--primary);
+        border-radius: 9px;
+      }
+      .progress-line {
+        display: flex;
+        justify-content: space-between;
+        color: var(--muted);
+        font-size: 11px;
+        margin-bottom: 8px;
+      }
+      .progress-track {
+        height: 8px;
+        border-radius: 8px;
+        background: #f0f1f5;
+        overflow: hidden;
+      }
+      .progress-track i {
+        height: 100%;
+        display: block;
+        background: var(--green);
+        border-radius: 8px;
+      }
+      .tip {
+        background: #f3f2ff;
+        border: 1px solid #e7e5ff;
+        padding: 15px;
+        border-radius: 13px;
+      }
+      .tip strong {
+        font-size: 12px;
+        color: #5149c6;
+      }
+      .tip p {
+        font-size: 11px;
+        color: #66618f;
+        margin: 5px 0 0;
+        line-height: 1.6;
+      }
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(19, 25, 38, 0.42);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        z-index: 20;
+      }
+      .modal-backdrop.show {
+        display: flex;
+      }
+      .modal {
+        width: min(640px, 100%);
+        max-height: 92vh;
+        overflow: auto;
+        background: #fff;
+        border-radius: 17px;
+        box-shadow: 0 24px 80px #10182835;
+      }
+      .modal-head {
+        padding: 19px 22px;
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .modal-head h2 {
+        font-size: 16px;
+        margin: 0;
+      }
+      .modal-body {
+        padding: 20px 22px;
+        display: grid;
+        gap: 14px;
+      }
+      .field {
+        display: grid;
+        gap: 6px;
+      }
+      .field label {
+        font-size: 11px;
+        font-weight: 700;
+        color: #536071;
+      }
+      .field input,
+      .field textarea,
+      .field select {
+        width: 100%;
+        padding: 10px 11px;
+      }
+      .field textarea {
+        resize: vertical;
+        min-height: 160px;
+        line-height: 1.6;
+      }
+      .field-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .modal-foot {
+        padding: 15px 22px;
+        border-top: 1px solid var(--line);
+        display: flex;
+        justify-content: flex-end;
+        gap: 9px;
+      }
+      .toast {
+        position: fixed;
+        right: 24px;
+        bottom: 24px;
+        background: #202938;
+        color: white;
+        padding: 11px 16px;
+        border-radius: 10px;
+        box-shadow: var(--shadow);
+        opacity: 0;
+        transform: translateY(8px);
+        transition: 0.2s;
+        pointer-events: none;
+        z-index: 30;
+      }
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .toast.err {
+        background: #a12626;
+      }
+      .mobile-menu {
+        display: none;
+      }
+      @media (max-width: 1050px) {
+        .workspace {
+          grid-template-columns: 1fr;
+        }
+        .right-col {
+          grid-template-columns: 1fr 1fr;
+        }
+        .stats {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .question-list {
+          max-height: none;
+        }
+      }
+      @media (max-width: 720px) {
+        .app {
+          grid-template-columns: 1fr;
+        }
+        .sidebar {
+          display: none;
+        }
+        .topbar {
+          height: 60px;
+          padding: 0 17px;
+        }
+        .mobile-menu {
+          display: inline-flex;
+        }
+        .content {
+          padding: 22px 15px;
+        }
+        .page-heading {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+        h1 {
+          font-size: 23px;
+        }
+        .stats {
+          gap: 9px;
+        }
+        .stat {
+          padding: 13px;
+        }
+        .stat strong {
+          font-size: 22px;
+        }
+        .right-col {
+          grid-template-columns: 1fr;
+        }
+        .toolbar {
+          padding: 12px;
+        }
+        .question-list {
+          padding: 4px 13px;
+        }
+        .question {
+          grid-template-columns: 1fr;
+        }
+        .q-actions {
+          justify-content: flex-start;
+        }
+        .field-row {
+          grid-template-columns: 1fr;
+        }
+        .top-actions .btn {
+          padding: 8px 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-icon">✳</div>
+          InterviewVault
+        </div>
+        <div>
+          <div class="nav-label">WORKSPACE</div>
+          <nav class="nav">
+            <button class="active" data-view="all">
+              <span class="ico">▦</span> All questions
+            </button>
+            <button data-view="learned">
+              <span class="ico">✓</span> Learned
+            </button>
+            <button data-view="reviewing">
+              <span class="ico">↻</span> Needs review
+            </button>
+            <button data-view="not-started">
+              <span class="ico">◷</span> Not started
+            </button>
+          </nav>
+        </div>
+        <div>
+          <div class="nav-label">YOUR LIBRARY</div>
+          <nav class="nav" id="categoryNav"></nav>
+        </div>
+        <div class="sidebar-bottom">
+          <strong>Study consistently</strong>
+          <p>
+            Save useful questions, write your own answers, and track your
+            interview readiness.
+          </p>
+        </div>
+      </aside>
+      <main class="main">
+        <header class="topbar">
+          <div class="breadcrumb">
+            <span class="mobile-menu">☰ &nbsp;</span> Workspace&nbsp; /
+            &nbsp;<b>Interview preparation</b>
+          </div>
+          <div class="top-actions">
+            <button class="btn" id="refreshBtn">↻ Refresh</button>
+            <button class="btn" id="exportBtn">↧ Export JSON</button>
+            <div class="avatar">P</div>
+          </div>
+        </header>
+        <div class="content">
+          <div class="page-heading">
+            <div>
+              <h1>Interview question bank</h1>
+              <p class="subtitle">
+                Build your knowledge base. Practice with purpose. Track your
+                progress.
+              </p>
+            </div>
+            <button class="btn btn-primary" id="addBtn">＋ Add question</button>
+          </div>
+          <section class="stats">
+            <div class="stat">
+              <div class="stat-top">
+                Total questions <span class="stat-icon">▤</span>
+              </div>
+              <strong id="totalStat">—</strong
+              ><small>Across all categories</small>
+            </div>
+            <div class="stat">
+              <div class="stat-top">
+                Learned <span class="stat-icon">✓</span>
+              </div>
+              <strong id="learnedStat">—</strong
+              ><small>Questions you have mastered</small>
+            </div>
+            <div class="stat">
+              <div class="stat-top">
+                In review <span class="stat-icon">↻</span>
+              </div>
+              <strong id="reviewStat">—</strong
+              ><small>Keep practicing these</small>
+            </div>
+            <div class="stat">
+              <div class="stat-top">
+                Categories <span class="stat-icon">◫</span>
+              </div>
+              <strong id="categoryStat">—</strong
+              ><small>Distinct subject areas</small>
+            </div>
+          </section>
+          <div class="workspace">
+            <section class="panel">
+              <div class="panel-head">
+                <h2 id="listTitle">All questions</h2>
+                <span class="count" id="resultCount">—</span>
+              </div>
+              <div class="toolbar">
+                <div class="search-wrap">
+                  <span>⌕</span
+                  ><input
+                    id="searchInput"
+                    type="search"
+                    placeholder="Search questions, topics or answers..."
+                  />
+                </div>
+                <select id="categoryFilter">
+                  <option value="">All categories</option>
+                </select>
+                <select id="difficultyFilter">
+                  <option value="">All levels</option>
+                  <option>Easy</option>
+                  <option>Medium</option>
+                  <option>Hard</option>
+                </select>
+              </div>
+              <div class="question-list" id="questionList">
+                <div class="loading">Loading questions from Supabase…</div>
+              </div>
+            </section>
+            <aside class="right-col">
+              <section class="panel side-panel">
+                <h3 class="side-title">Category breakdown</h3>
+                <div class="category-list" id="categoryBreakdown"></div>
+              </section>
+              <section class="panel side-panel">
+                <h3 class="side-title">Your learning progress</h3>
+                <div class="progress-line">
+                  <span>Mastered questions</span><b id="progressText">0%</b>
+                </div>
+                <div class="progress-track">
+                  <i id="progressBar" style="width: 0%"></i>
+                </div>
+                <p
+                  style="font-size: 11px; color: var(--muted); margin: 10px 0 0"
+                  id="progressCaption"
+                >
+                  Loading…
+                </p>
+              </section>
+              <div class="tip">
+                <strong>✦ Preparation tip</strong>
+                <p>
+                  Try answering each question out loud before revealing or
+                  reviewing your written answer. Explain the concept, give an
+                  example, and mention trade-offs.
+                </p>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <div class="modal-backdrop" id="modalBackdrop">
+      <div
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modalTitle"
+      >
+        <div class="modal-head">
+          <h2 id="modalTitle">Add interview question</h2>
+          <button class="icon-btn" id="closeModal" aria-label="Close">✕</button>
+        </div>
+        <form id="questionForm">
+          <div class="modal-body">
+            <div class="field">
+              <label for="qTitle">QUESTION</label
+              ><input
+                id="qTitle"
+                required
+                placeholder="e.g. What is the bias-variance trade-off?"
+              />
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="qCategory">CATEGORY</label
+                ><input
+                  id="qCategory"
+                  list="categoryOptions"
+                  required
+                  placeholder="e.g. Machine Learning"
+                /><datalist id="categoryOptions"></datalist>
+              </div>
+              <div class="field">
+                <label for="qTopic">TOPIC</label
+                ><input
+                  id="qTopic"
+                  required
+                  placeholder="e.g. Model evaluation"
+                />
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="qDifficulty">DIFFICULTY</label>
+                <select id="qDifficulty">
+                  <option>Easy</option>
+                  <option selected>Medium</option>
+                  <option>Hard</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="qStatus">LEARNING STATUS</label>
+                <select id="qStatus">
+                  <option value="not-started">Not started</option>
+                  <option value="reviewing">Reviewing</option>
+                  <option value="learned">Learned</option>
+                </select>
+              </div>
+            </div>
+            <div class="field">
+              <label for="qAnswer">ANSWER / EXPLANATION</label>
+              <textarea
+                id="qAnswer"
+                required
+                placeholder="Write a clear explanation, example, formula, or code snippet..."
+              ></textarea>
+            </div>
+          </div>
+          <div class="modal-foot">
+            <button type="button" class="btn" id="cancelBtn">Cancel</button>
+            <button class="btn btn-primary" type="submit" id="saveBtn">
+              Save question
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="toast" id="toast"></div>
+
+    <script>
+      const API = "/api/questions";
+      let questions = [];
+      let activeView = "all";
+      let activeCategory = "";
+      let editingId = null;
+      let busy = false;
+
+      function esc(s) {
+        return String(s ?? "").replace(
+          /[&<>"']/g,
+          (c) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[c],
+        );
+      }
+      function statusLabel(s) {
+        return s === "learned"
+          ? "Learned"
+          : s === "reviewing"
+            ? "Reviewing"
+            : "Not started";
+      }
+      function toast(msg, isErr = false) {
+        const t = document.getElementById("toast");
+        t.textContent = msg;
+        t.classList.toggle("err", !!isErr);
+        t.classList.add("show");
+        clearTimeout(toast._t);
+        toast._t = setTimeout(() => t.classList.remove("show"), 2400);
+      }
+
+      async function api(path, options = {}) {
+        const res = await fetch(path, {
+          headers: { "Content-Type": "application/json" },
+          ...options,
+          body: options.body ? JSON.stringify(options.body) : undefined,
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+        return data;
+      }
+
+      async function loadQuestions() {
+        const list = document.getElementById("questionList");
+        list.innerHTML =
+          '<div class="loading">Loading questions from Supabase…</div>';
+        try {
+          const data = await api(API, { method: "GET" });
+          questions = data.questions || [];
+          render();
+        } catch (err) {
+          list.innerHTML = `<div class="empty"><b>Could not load questions</b>${esc(err.message)}</div>`;
+          toast(err.message, true);
+        }
+      }
+
+      function render() {
+        const cats = [
+          ...new Set(questions.map((q) => q.category).filter(Boolean)),
+        ].sort();
+        const count = (s) => questions.filter((q) => q.status === s).length;
+
+        document.getElementById("totalStat").textContent = questions.length;
+        document.getElementById("learnedStat").textContent = count("learned");
+        document.getElementById("reviewStat").textContent = count("reviewing");
+        document.getElementById("categoryStat").textContent = cats.length;
+
+        const pct = questions.length
+          ? Math.round((count("learned") / questions.length) * 100)
+          : 0;
+        document.getElementById("progressText").textContent = pct + "%";
+        document.getElementById("progressBar").style.width = pct + "%";
+        document.getElementById("progressCaption").textContent =
+          `${count("learned")} of ${questions.length} questions marked as learned.`;
+
+        // category dropdown + datalist
+        const filter = document.getElementById("categoryFilter"),
+          old = filter.value;
+        filter.innerHTML =
+          '<option value="">All categories</option>' +
+          cats
+            .map((c) => `<option value="${esc(c)}">${esc(c)}</option>`)
+            .join("");
+        filter.value = cats.includes(old) ? old : "";
+        document.getElementById("categoryOptions").innerHTML = cats
+          .map((c) => `<option value="${esc(c)}">`)
+          .join("");
+
+        // category sidebar nav
+        document.getElementById("categoryNav").innerHTML = cats.length
+          ? cats
+              .map(
+                (c) =>
+                  `<button data-category="${esc(c)}"><span class="ico">◆</span> ${esc(c)}</button>`,
+              )
+              .join("")
+          : '<button disabled style="opacity:.5"><span class="ico">◆</span> No categories yet</button>';
+        wireCategoryNav();
+
+        const qterm = document
+          .getElementById("searchInput")
+          .value.toLowerCase()
+          .trim();
+        const cat = activeCategory || filter.value;
+        const diff = document.getElementById("difficultyFilter").value;
+
+        const visible = questions.filter(
+          (q) =>
+            (activeView === "all" || q.status === activeView) &&
+            (!cat || q.category === cat) &&
+            (!diff || q.difficulty === diff) &&
+            (!qterm ||
+              [q.question, q.answer, q.topic, q.category]
+                .join(" ")
+                .toLowerCase()
+                .includes(qterm)),
+        );
+
+        document.getElementById("listTitle").textContent =
+          activeCategory ||
+          {
+            all: "All questions",
+            learned: "Learned questions",
+            reviewing: "Needs review",
+            "not-started": "Not started",
+          }[activeView];
+        document.getElementById("resultCount").textContent =
+          `${visible.length} question${visible.length === 1 ? "" : "s"}`;
+
+        document.getElementById("questionList").innerHTML = visible.length
+          ? visible
+              .map(
+                (q) => `
+      <article class="question">
+        <div>
+          <div class="q-meta">
+            <span class="tag category">${esc(q.category || "Uncategorized")}</span>
+            ${q.topic ? `<span class="tag">${esc(q.topic)}</span>` : ""}
+            <span class="tag ${String(q.difficulty || "").toLowerCase()}">${esc(q.difficulty)}</span>
+            <button class="status ${q.status}" data-status="${esc(q.id)}" title="Click to change status">${statusLabel(q.status)} ▾</button>
+          </div>
+          <h3>${esc(q.question)}</h3>
+          <p class="answer">${esc(q.answer)}</p>
+        </div>
+        <div class="q-actions">
+          <button class="icon-btn" data-edit="${esc(q.id)}" title="Edit">✎</button>
+          <button class="icon-btn" data-delete="${esc(q.id)}" title="Delete">⌫</button>
+        </div>
+      </article>`,
+              )
+              .join("")
+          : '<div class="empty"><b>No questions found</b>Try another search or add a new question to your library.</div>';
+
+        document.getElementById("categoryBreakdown").innerHTML = cats.length
+          ? cats
+              .map((c) => {
+                const n = questions.filter((q) => q.category === c).length;
+                return `<div class="category-row">
+          <span class="category-name">${esc(c)}</span>
+          <span class="category-count">${n}</span>
+          <div class="bar"><i style="width:${questions.length ? (n / questions.length) * 100 : 0}%"></i></div>
+        </div>`;
+              })
+              .join("")
+          : '<p class="subtitle">Categories will appear here.</p>';
+      }
+
+      function wireCategoryNav() {
+        document
+          .querySelectorAll("#categoryNav [data-category]")
+          .forEach((b) => {
+            b.onclick = () => {
+              activeCategory = b.dataset.category;
+              activeView = "all";
+              document
+                .querySelectorAll("[data-view],[data-category]")
+                .forEach((x) => x.classList.remove("active"));
+              b.classList.add("active");
+              render();
+            };
+          });
+      }
+
+      function openModal(q = null) {
+        editingId = q ? q.id : null;
+        document.getElementById("modalTitle").textContent = q
+          ? "Edit question"
+          : "Add interview question";
+        document.getElementById("qTitle").value = q?.question || "";
+        document.getElementById("qCategory").value = q?.category || "";
+        document.getElementById("qTopic").value = q?.topic || "";
+        document.getElementById("qDifficulty").value =
+          q?.difficulty || "Medium";
+        document.getElementById("qStatus").value = q?.status || "not-started";
+        document.getElementById("qAnswer").value = q?.answer || "";
+        document.getElementById("modalBackdrop").classList.add("show");
+        document.getElementById("qTitle").focus();
+      }
+      function closeModal() {
+        document.getElementById("modalBackdrop").classList.remove("show");
+        document.getElementById("questionForm").reset();
+        editingId = null;
+      }
+
+      document.getElementById("addBtn").onclick = () => openModal();
+      document.getElementById("closeModal").onclick = closeModal;
+      document.getElementById("cancelBtn").onclick = closeModal;
+      document
+        .getElementById("modalBackdrop")
+        .addEventListener("click", (e) => {
+          if (e.target.id === "modalBackdrop") closeModal();
+        });
+      document.getElementById("refreshBtn").onclick = () => {
+        loadQuestions();
+        toast("Reloaded from Supabase");
+      };
+
+      document.getElementById("questionForm").onsubmit = async (e) => {
+        e.preventDefault();
+        if (busy) return;
+        busy = true;
+        const saveBtn = document.getElementById("saveBtn");
+        saveBtn.disabled = true;
+        saveBtn.textContent = "Saving…";
+
+        const payload = {
+          id: editingId || undefined,
+          question: document.getElementById("qTitle").value.trim(),
+          category: document.getElementById("qCategory").value.trim(),
+          topic: document.getElementById("qTopic").value.trim(),
+          difficulty: document.getElementById("qDifficulty").value,
+          status: document.getElementById("qStatus").value,
+          answer: document.getElementById("qAnswer").value.trim(),
+        };
+
+        try {
+          if (editingId) {
+            await api(API, { method: "PUT", body: payload });
+            toast("Question updated");
+          } else {
+            await api(API, { method: "POST", body: payload });
+            toast("Question added to your library");
+          }
+          closeModal();
+          await loadQuestions();
+        } catch (err) {
+          toast(err.message, true);
+        } finally {
+          busy = false;
+          saveBtn.disabled = false;
+          saveBtn.textContent = "Save question";
+        }
+      };
+
+      document
+        .getElementById("questionList")
+        .addEventListener("click", async (e) => {
+          const edit = e.target.closest("[data-edit]");
+          const del = e.target.closest("[data-delete]");
+          const st = e.target.closest("[data-status]");
+
+          if (edit) {
+            const q = questions.find(
+              (x) => String(x.id) === String(edit.dataset.edit),
+            );
+            if (q) openModal(q);
+            return;
+          }
+
+          if (del) {
+            if (!confirm("Delete this question?")) return;
+            try {
+              await api(API, {
+                method: "DELETE",
+                body: { id: del.dataset.delete },
+              });
+              toast("Question deleted");
+              await loadQuestions();
+            } catch (err) {
+              toast(err.message, true);
+            }
+            return;
+          }
+
+          if (st) {
+            const q = questions.find(
+              (x) => String(x.id) === String(st.dataset.status),
+            );
+            if (!q) return;
+            const order = ["not-started", "reviewing", "learned"];
+            const next = order[(order.indexOf(q.status) + 1) % order.length];
+            // optimistic
+            const prev = q.status;
+            q.status = next;
+            render();
+            try {
+              await api(API, {
+                method: "PUT",
+                body: { id: q.id, status: next },
+              });
+              toast("Learning status updated");
+            } catch (err) {
+              q.status = prev;
+              render();
+              toast(err.message, true);
+            }
+          }
+        });
+
+      document.getElementById("searchInput").addEventListener("input", render);
+      document
+        .getElementById("categoryFilter")
+        .addEventListener("change", () => {
+          activeCategory = "";
+          render();
+        });
+      document
+        .getElementById("difficultyFilter")
+        .addEventListener("change", render);
+
+      document.querySelectorAll("[data-view]").forEach(
+        (b) =>
+          (b.onclick = () => {
+            activeView = b.dataset.view;
+            activeCategory = "";
+            document
+              .querySelectorAll("[data-view],[data-category]")
+              .forEach((x) => x.classList.remove("active"));
+            b.classList.add("active");
+            render();
+          }),
+      );
+
+      document.getElementById("exportBtn").onclick = () => {
+        const blob = new Blob([JSON.stringify(questions, null, 2)], {
+          type: "application/json",
+        });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "interview-questions.json";
+        a.click();
+        URL.revokeObjectURL(a.href);
+        toast("JSON backup exported");
+      };
+
+      loadQuestions();
+    </script>
+  </body>
+</html>

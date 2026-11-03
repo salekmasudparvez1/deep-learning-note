@@ -21,6 +21,7 @@ const content = {
     nav: [
       { label: "Resources", href: "#resources" },
       { label: "Routine", href: "/routine" },
+
       { label: "Dashboard", href: "/dashboard" },
     ],
     footer: {
@@ -133,6 +134,80 @@ async function readData() {
   };
 }
 
+async function readQuestions() {
+  const rows = await supabase(
+    "interview_questions?select=id,question,answer,category,topic,difficulty,status,created_at,updated_at&order=created_at.desc",
+  );
+  return rows.map((row) => ({
+    id: row.id,
+    question: row.question,
+    answer: row.answer,
+    category: row.category,
+    topic: row.topic,
+    difficulty: row.difficulty,
+    status: row.status,
+  }));
+}
+
+const DIFFICULTIES = new Set(["Easy", "Medium", "Hard"]);
+const STATUSES = new Set(["not-started", "reviewing", "learned"]);
+
+async function handleQuestions(req, res, body) {
+  if (req.method === "GET") {
+    return res.status(200).json({ ok: true, questions: await readQuestions() });
+  }
+
+  if (req.method === "POST") {
+    const question = body.question?.trim();
+    if (!question) return res.status(400).json({ error: "Question text is required." });
+    const difficulty = DIFFICULTIES.has(body.difficulty) ? body.difficulty : "Medium";
+    const status = STATUSES.has(body.status) ? body.status : "not-started";
+    const [row] = await supabase("interview_questions", {
+      method: "POST",
+      body: JSON.stringify({
+        id: id("q"),
+        question,
+        answer: (body.answer || "").trim(),
+        category: (body.category || "").trim(),
+        topic: (body.topic || "").trim(),
+        difficulty,
+        status,
+      }),
+    });
+    return res.status(201).json({ ok: true, question: row });
+  }
+
+  if (req.method === "PUT") {
+    if (!body.id) return res.status(400).json({ error: "id is required." });
+    const patch = {};
+    if (typeof body.question === "string") patch.question = body.question.trim();
+    if (typeof body.answer === "string") patch.answer = body.answer.trim();
+    if (typeof body.category === "string") patch.category = body.category.trim();
+    if (typeof body.topic === "string") patch.topic = body.topic.trim();
+    if (DIFFICULTIES.has(body.difficulty)) patch.difficulty = body.difficulty;
+    if (STATUSES.has(body.status)) patch.status = body.status;
+    if (Object.keys(patch).length === 0) {
+      return res.status(400).json({ error: "Nothing to update." });
+    }
+    patch.updated_at = new Date().toISOString();
+    const [row] = await supabase(
+      `interview_questions?id=eq.${encodeURIComponent(body.id)}`,
+      { method: "PATCH", body: JSON.stringify(patch) },
+    );
+    return res.status(200).json({ ok: true, question: row });
+  }
+
+  if (req.method === "DELETE") {
+    if (!body.id) return res.status(400).json({ error: "id is required." });
+    await supabase(`interview_questions?id=eq.${encodeURIComponent(body.id)}`, {
+      method: "DELETE",
+    });
+    return res.status(200).json({ ok: true });
+  }
+
+  return res.status(405).json({ error: "Unsupported method." });
+}
+
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
@@ -140,12 +215,21 @@ export default async function handler(req, res) {
   if (req.method === "OPTIONS") return res.status(204).end();
 
   try {
-    if (req.method === "GET") return res.status(200).json(await readData());
     const body = bodyOf(req);
+    const path = (req.url || "").split("?")[0];
+
+    if (path.startsWith("/api/questions") || path.startsWith("/questions")) {
+      return handleQuestions(req, res, body);
+    }
+
+    if (req.method === "GET") return res.status(200).json(await readData());
 
     if (req.method === "POST" && (body.type || "record") === "record") {
+      if (!body.taskId || typeof body.completed !== "boolean") {
+        return res.status(400).json({ error: "A valid taskId and completed boolean are required." });
+      }
       const task = await supabase(`routine_topics?id=eq.${encodeURIComponent(body.taskId)}&select=id`);
-      if (!body.taskId || typeof body.completed !== "boolean" || !task.length) {
+      if (!task.length) {
         return res.status(400).json({ error: "A valid taskId and completed boolean are required." });
       }
       const [entry] = await supabase("routine_records", {
