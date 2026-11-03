@@ -7,12 +7,8 @@
       "destination": "/dashboard.html"
     },
     {
-      "source": "/routine",
-      "destination": "/web_view_routine.html"
-    },
-    {
       "source": "/(.*)",
-      "destination": "/web_view_routine.html"
+      "destination": "/index.html"
     }
   ]
 }

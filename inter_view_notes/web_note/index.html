@@ -1,4 +1,1054 @@
 <!doctype html>
-<meta http-equiv="refresh" content="0; url=/web_view_routine.html" />
-<title>Parvez AI Eng Routine</title>
-<a href="/web_view_routine.html">Open Parvez AI Eng Routine</a>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f7f8fa" />
+    <meta
+      name="description"
+      content="Parvez AI Engineer Routine — a dynamic dashboard backed by Supabase."
+    />
+    <title>Parvez AI Eng Routine</title>
+    <style>
+      :root {
+        --bg: #f7f8fa;
+        --card: #fff;
+        --ink: #17202b;
+        --muted: #687383;
+        --line: #e7eaf0;
+        --accent: #2563eb;
+        --accent-soft: #eff6ff;
+        --green: #12805c;
+        --shadow: 0 10px 30px rgba(22, 34, 51, 0.045);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font:
+          15px/1.55 Inter,
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      .wrap {
+        max-width: 1100px;
+        margin: auto;
+        padding: 0 24px;
+      }
+      header {
+        border-bottom: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.82);
+      }
+      .nav {
+        height: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        font-weight: 750;
+        letter-spacing: -0.03em;
+      }
+      .mark {
+        width: 35px;
+        height: 35px;
+        border-radius: 11px;
+        background: var(--ink);
+        color: white;
+        display: grid;
+        place-items: center;
+        font-size: 13px;
+        letter-spacing: -0.04em;
+      }
+      .navlinks {
+        display: flex;
+        gap: 22px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .navlinks a:hover {
+        color: var(--accent);
+      }
+      .hero {
+        padding: 55px 0 30px;
+      }
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--green);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #16a34a;
+      }
+      .hero h1 {
+        font-size: clamp(34px, 5vw, 54px);
+        letter-spacing: -0.055em;
+        line-height: 1.08;
+        margin: 15px 0 13px;
+        max-width: 700px;
+      }
+      .hero p {
+        color: var(--muted);
+        font-size: 16px;
+        max-width: 650px;
+        margin: 0;
+      }
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 24px;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        border-radius: 10px;
+        padding: 11px 15px;
+        font-weight: 650;
+        font-size: 13px;
+        border: 1px solid var(--line);
+        background: white;
+        transition:
+          transform 0.15s,
+          border-color 0.15s;
+        cursor: pointer;
+      }
+      .btn:hover {
+        transform: translateY(-1px);
+        border-color: #b7c5dc;
+      }
+      .btn.primary {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #fff;
+      }
+      .btn.primary:hover {
+        background: #1d4ed8;
+      }
+      .section {
+        padding: 24px 0 14px;
+      }
+      .section-head {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+      }
+      .section h2 {
+        font-size: 20px;
+        letter-spacing: -0.035em;
+        margin: 0;
+      }
+      .section-head p {
+        color: var(--muted);
+        font-size: 13px;
+        margin: 4px 0 0;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: var(--shadow);
+        min-width: 0;
+      }
+      .card-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      .icon {
+        width: 38px;
+        height: 38px;
+        display: grid;
+        place-items: center;
+        border-radius: 11px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-weight: 800;
+        font-size: 13px;
+      }
+      .tag {
+        font-size: 11px;
+        padding: 4px 8px;
+        border-radius: 99px;
+        background: #f3f5f8;
+        color: #657184;
+        font-weight: 650;
+      }
+      .card h3 {
+        font-size: 16px;
+        letter-spacing: -0.02em;
+        margin: 15px 0 6px;
+      }
+      .card p {
+        font-size: 13px;
+        color: var(--muted);
+        margin: 0 0 16px;
+        min-height: 40px;
+      }
+      .card-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        color: var(--accent);
+        font-size: 13px;
+        font-weight: 700;
+      }
+      .card-link:hover {
+        text-decoration: underline;
+      }
+      .routine {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      .routine-card {
+        background: white;
+        border: 1px solid var(--line);
+        border-radius: 15px;
+        padding: 20px;
+      }
+      .routine-card h3 {
+        margin: 0 0 4px;
+        font-size: 15px;
+      }
+      .routine-card .sub {
+        font-size: 12px;
+        color: var(--muted);
+        margin: 0 0 14px;
+      }
+      .task {
+        display: flex;
+        gap: 11px;
+        align-items: flex-start;
+        padding: 11px 0;
+        border-top: 1px solid #f0f2f5;
+      }
+      .task input {
+        accent-color: var(--accent);
+        margin-top: 4px;
+        width: 15px;
+        height: 15px;
+        flex: 0 0 auto;
+        cursor: pointer;
+      }
+      .task label {
+        font-size: 13px;
+        cursor: pointer;
+        flex: 1;
+      }
+      .task small {
+        display: block;
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 2px;
+      }
+      .task.done label {
+        text-decoration: line-through;
+        color: #8a94a3;
+      }
+      .sheet {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 15px;
+        padding: 21px;
+        box-shadow: var(--shadow);
+        flex-wrap: wrap;
+      }
+      .sheet-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .sheet-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: #eaf8ef;
+        color: #16803c;
+        display: grid;
+        place-items: center;
+        font-weight: 800;
+      }
+      .sheet h3 {
+        margin: 0 0 4px;
+        font-size: 15px;
+      }
+      .sheet p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .perf-panel {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 15px;
+        padding: 20px 20px 18px;
+        box-shadow: var(--shadow);
+        margin-top: 18px;
+      }
+      .perf-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 12px;
+      }
+      .perf-head h3 {
+        margin: 0;
+        font-size: 16px;
+        letter-spacing: -0.02em;
+      }
+      .filter-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .filter-row label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .filter-row input[type="date"] {
+        font: inherit;
+        padding: 7px 10px;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        background: #fff;
+        color: var(--ink);
+      }
+      .perf-stats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 18px 32px;
+        margin: 6px 0 14px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .perf-stats b {
+        color: var(--ink);
+        font-size: 15px;
+        margin-left: 4px;
+      }
+      .chart-wrap {
+        position: relative;
+        height: 180px;
+        margin-top: 6px;
+      }
+      .chart-wrap canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      .empty-chart {
+        display: grid;
+        place-items: center;
+        height: 100%;
+        color: #9aa5b5;
+        font-size: 13px;
+        border: 1px dashed var(--line);
+        border-radius: 10px;
+      }
+      .error-banner {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #b91c1c;
+        padding: 10px 14px;
+        border-radius: 10px;
+        font-size: 13px;
+        margin-bottom: 14px;
+        display: none;
+      }
+      .skeleton {
+        background: linear-gradient(
+          90deg,
+          #eef1f5 25%,
+          #f7f8fa 50%,
+          #eef1f5 75%
+        );
+        background-size: 200% 100%;
+        animation: sk 1.2s infinite;
+        border-radius: 8px;
+        min-height: 16px;
+      }
+      @keyframes sk {
+        0% {
+          background-position: 200% 0;
+        }
+        100% {
+          background-position: -200% 0;
+        }
+      }
+      footer {
+        padding: 35px 0 28px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .footer-inner {
+        border-top: 1px solid var(--line);
+        padding-top: 18px;
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      @media (max-width: 760px) {
+        .grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .navlinks {
+          gap: 12px;
+        }
+        .hero {
+          padding-top: 42px;
+        }
+        .chart-wrap {
+          height: 150px;
+        }
+      }
+      @media (max-width: 540px) {
+        .wrap {
+          padding: 0 16px;
+        }
+        .nav {
+          height: 64px;
+        }
+        .navlinks a:nth-child(2) {
+          display: none;
+        }
+        .grid,
+        .routine {
+          grid-template-columns: 1fr;
+        }
+        .hero h1 {
+          font-size: 38px;
+        }
+        .card p {
+          min-height: 0;
+        }
+        .sheet {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+        .section-head {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+        .filter-row {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="wrap nav">
+        <a class="brand" href="#" id="brandLink" aria-label="home"
+          ><span class="mark" id="brandMark">PA</span
+          ><span id="brandName">…</span></a
+        >
+        <nav class="navlinks" id="mainNav" aria-label="Main navigation"></nav>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <div id="errorBanner" class="error-banner"></div>
+
+      <section class="hero" id="heroSection">
+        <span class="eyebrow"
+          ><span class="dot"></span> <span id="heroEyebrow">…</span></span
+        >
+        <h1 id="heroTitle">…</h1>
+        <p id="heroDesc">…</p>
+        <div class="hero-actions" id="heroActions"></div>
+      </section>
+
+      <section class="section" id="resources">
+        <div class="section-head">
+          <div>
+            <h2 id="resHeading">…</h2>
+            <p id="resSub">…</p>
+          </div>
+        </div>
+        <div class="grid" id="resGrid"></div>
+      </section>
+
+      <section class="section" id="tracker">
+        <div class="section-head">
+          <div>
+            <h2 id="trkHeading">…</h2>
+            <p id="trkSub">…</p>
+          </div>
+        </div>
+        <div class="sheet" id="trackerCard"></div>
+      </section>
+
+      <section class="section" id="routine">
+        <div class="section-head">
+          <div>
+            <h2 id="rtHeading">…</h2>
+            <p id="rtSub">…</p>
+          </div>
+        </div>
+        <div class="routine" id="routineGrid"></div>
+
+        <div class="perf-panel">
+          <div class="perf-head">
+            <h3 id="perfHeading">…</h3>
+            <div class="filter-row">
+              <label>From <input type="date" id="filterFrom" /></label>
+              <label>To <input type="date" id="filterTo" /></label>
+              <button class="btn" id="resetFilter" style="padding: 7px 12px">
+                Reset
+              </button>
+            </div>
+          </div>
+          <div class="perf-stats" id="perfStats"></div>
+          <div class="chart-wrap">
+            <canvas id="perfChart"></canvas>
+            <div id="chartEmpty" class="empty-chart" style="display: none">
+              No data yet — check a task to start tracking.
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="wrap footer-inner">
+        <span id="footerLeft">…</span><span id="footerRight">…</span>
+      </div>
+    </footer>
+
+    <script>
+      /* =========================================================
+   CONFIG
+   ========================================================= */
+      const API_BASE = "/api"; // JSON API for routine data and completion records
+      let DATA = null; // whole Supabase-backed API payload
+      let TASK_IDS = []; // dynamically derived from DATA.routine.groups
+
+      /* DOM refs */
+      const $ = (id) => document.getElementById(id);
+      const errorBanner = $("errorBanner");
+      const filterFrom = $("filterFrom");
+      const filterTo = $("filterTo");
+      const resetFilter = $("resetFilter");
+      const canvas = $("perfChart");
+      const ctx = canvas.getContext("2d");
+      const chartEmpty = $("chartEmpty");
+
+      /* =========================================================
+   HELPERS
+   ========================================================= */
+      function showError(msg) {
+        errorBanner.textContent = msg;
+        errorBanner.style.display = msg ? "block" : "none";
+      }
+
+      function localDateKey(iso) {
+        const d = new Date(iso);
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, "0");
+        const day = String(d.getDate()).padStart(2, "0");
+        return `${y}-${m}-${day}`;
+      }
+
+      /* Derive checkbox states from DATA.records (latest wins per taskId) */
+      function deriveTaskStates() {
+        const state = {};
+        TASK_IDS.forEach((id) => (state[id] = false));
+        const sorted = [...(DATA.records || [])].sort(
+          (a, b) => new Date(a.timestamp) - new Date(b.timestamp),
+        );
+        sorted.forEach((r) => {
+          if (TASK_IDS.includes(r.taskId)) state[r.taskId] = !!r.completed;
+        });
+        return state;
+      }
+
+      /* =========================================================
+   RENDER: META
+   ========================================================= */
+      function renderMeta() {
+        const m = DATA.meta || {};
+        document.title = m.siteTitle || "Routine";
+        $("brandMark").textContent = m.brandMark || "PA";
+        $("brandName").textContent = m.siteTitle || "";
+
+        const nav = $("mainNav");
+        nav.innerHTML = "";
+        (m.nav || []).forEach((item) => {
+          const a = document.createElement("a");
+          a.href = item.href;
+          a.textContent = item.label;
+          nav.appendChild(a);
+        });
+
+        const h = m.hero || {};
+        $("heroEyebrow").textContent = h.eyebrow || "";
+        $("heroTitle").innerHTML =
+          (h.titleLine1 || "") + "<br>" + (h.titleLine2 || "");
+        $("heroDesc").textContent = h.description || "";
+
+        const actions = $("heroActions");
+        actions.innerHTML = "";
+        const addBtn = (cfg, cls) => {
+          if (!cfg) return;
+          const a = document.createElement("a");
+          a.className = "btn " + (cls || "");
+          a.href = cfg.url;
+          a.target = "_blank";
+          a.rel = "noopener noreferrer";
+          a.textContent = cfg.label;
+          actions.appendChild(a);
+        };
+        addBtn(h.primaryCta, "primary");
+        addBtn(h.secondaryCta, "");
+
+        $("footerLeft").textContent =
+          "© " + new Date().getFullYear() + " " + (m.footer?.left || "");
+        $("footerRight").textContent = m.footer?.right || "";
+      }
+
+      /* =========================================================
+   RENDER: RESOURCES
+   ========================================================= */
+      function renderResources() {
+        const r = DATA.resources || {};
+        $("resHeading").textContent = r.heading || "";
+        $("resSub").textContent = r.subheading || "";
+        const grid = $("resGrid");
+        grid.innerHTML = "";
+
+        (r.items || []).forEach((item) => {
+          const art = document.createElement("article");
+          art.className = "card";
+          art.innerHTML = `
+      <div class="card-top">
+        <span class="icon">${escapeHtml(item.icon || "")}</span>
+        <span class="tag">${escapeHtml(item.tag || "")}</span>
+      </div>
+      <h3>${escapeHtml(item.title || "")}</h3>
+      <p>${escapeHtml(item.description || "")}</p>
+      <a class="card-link" href="${escapeAttr(item.linkUrl || "#")}" target="_blank" rel="noopener noreferrer">${escapeHtml(item.linkText || "Open ↗")}</a>
+    `;
+          grid.appendChild(art);
+        });
+      }
+
+      /* =========================================================
+   RENDER: TRACKER
+   ========================================================= */
+      function renderTracker() {
+        const t = DATA.tracker || {};
+        $("trkHeading").textContent = t.heading || "";
+        $("trkSub").textContent = t.subheading || "";
+        const card = $("trackerCard");
+        card.innerHTML = `
+    <div class="sheet-left">
+      <div class="sheet-icon">✓</div>
+      <div>
+        <h3>${escapeHtml(t.cardTitle || "")}</h3>
+        <p>${escapeHtml(t.cardDescription || "")}</p>
+      </div>
+    </div>
+    <a class="btn primary" href="${escapeAttr(t.buttonUrl || "#")}" target="_blank" rel="noopener noreferrer">${escapeHtml(t.buttonLabel || "Open ↗")}</a>
+  `;
+      }
+
+      /* =========================================================
+   RENDER: ROUTINE
+   ========================================================= */
+      function renderRoutine() {
+        const rt = DATA.routine || {};
+        $("rtHeading").textContent = rt.heading || "";
+        $("rtSub").textContent = rt.subheading || "";
+
+        TASK_IDS = [];
+        (rt.groups || []).forEach((g) =>
+          (g.tasks || []).forEach((t) => TASK_IDS.push(t.id)),
+        );
+
+        const grid = $("routineGrid");
+        grid.innerHTML = "";
+        (rt.groups || []).forEach((group) => {
+          const card = document.createElement("div");
+          card.className = "routine-card";
+          card.innerHTML = `<h3>${escapeHtml(group.title || "")}</h3><p class="sub">${escapeHtml(group.subtitle || "")}</p>`;
+          (group.tasks || []).forEach((task) => {
+            const wrap = document.createElement("div");
+            wrap.className = "task";
+            wrap.dataset.taskId = task.id;
+            wrap.innerHTML = `
+        <input type="checkbox" id="${escapeAttr(task.id)}">
+        <label for="${escapeAttr(task.id)}">
+          ${escapeHtml(task.title || "")}
+          <small>${escapeHtml(task.hint || "")}</small>
+        </label>
+      `;
+            card.appendChild(wrap);
+          });
+          grid.appendChild(card);
+        });
+
+        // apply saved state + bind change
+        const states = deriveTaskStates();
+        TASK_IDS.forEach((id) => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          el.checked = !!states[id];
+          el.closest(".task").classList.toggle("done", el.checked);
+          el.addEventListener("change", () => {
+            el.closest(".task").classList.toggle("done", el.checked);
+            postRecord(id, el.checked);
+          });
+        });
+      }
+
+      /* =========================================================
+   RENDER: PERFORMANCE PANEL (stats + chart)
+   ========================================================= */
+      function renderPerformanceLabels() {
+        const p = DATA.performance || {};
+        $("perfHeading").textContent = p.heading || "📈 Performance over time";
+        const labels = p.statsLabels || {};
+        $("perfStats").innerHTML = `
+    <span>${escapeHtml(labels.total || "Total tasks completed")} <b id="statTotal">0</b></span>
+    <span>${escapeHtml(labels.days || "Active days")} <b id="statDays">0</b></span>
+    <span>${escapeHtml(labels.streak || "Current streak")} <b id="statStreak">0</b> days</span>
+  `;
+      }
+
+      function computeStats() {
+        const from = filterFrom.value
+          ? new Date(filterFrom.value + "T00:00:00")
+          : null;
+        const to = filterTo.value
+          ? new Date(filterTo.value + "T23:59:59")
+          : null;
+
+        const filtered = (DATA.records || []).filter((r) => {
+          const t = new Date(r.timestamp);
+          if (from && t < from) return false;
+          if (to && t > to) return false;
+          return true;
+        });
+
+        const completed = filtered.filter((r) => r.completed === true);
+        const dayMap = new Map();
+        completed.forEach((r) => {
+          const k = localDateKey(r.timestamp);
+          dayMap.set(k, (dayMap.get(k) || 0) + 1);
+        });
+
+        const total = completed.length;
+        const days = dayMap.size;
+
+        // streak (consecutive days ending today / yesterday)
+        const todayKey = localDateKey(new Date().toISOString());
+        const y = new Date();
+        y.setDate(y.getDate() - 1);
+        const yKey = localDateKey(y.toISOString());
+        let checkKey = dayMap.has(todayKey)
+          ? todayKey
+          : dayMap.has(yKey)
+            ? yKey
+            : null;
+        let streak = 0;
+        if (checkKey) {
+          let d = new Date(checkKey + "T12:00:00");
+          while (dayMap.has(localDateKey(d.toISOString()))) {
+            streak++;
+            d.setDate(d.getDate() - 1);
+          }
+        }
+
+        const chartData = Array.from(dayMap.entries())
+          .sort(([a], [b]) => a.localeCompare(b))
+          .map(([date, count]) => ({ date, count }));
+
+        return { total, days, streak, chartData };
+      }
+
+      function updateStatsUI() {
+        const s = computeStats();
+        $("statTotal").textContent = s.total;
+        $("statDays").textContent = s.days;
+        $("statStreak").textContent = s.streak;
+      }
+
+      /* =========================================================
+   CHART (canvas, no deps)
+   ========================================================= */
+      function drawChart() {
+        const { chartData } = computeStats();
+        const dpr = window.devicePixelRatio || 1;
+        const rect = canvas.getBoundingClientRect();
+        const w = rect.width || canvas.parentElement.clientWidth;
+        const h = rect.height || 180;
+
+        canvas.width = w * dpr;
+        canvas.height = h * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, w, h);
+
+        if (!chartData.length) {
+          chartEmpty.style.display = "grid";
+          canvas.style.display = "none";
+          return;
+        }
+        chartEmpty.style.display = "none";
+        canvas.style.display = "block";
+
+        const pad = { top: 18, right: 16, bottom: 28, left: 32 };
+        const plotW = w - pad.left - pad.right;
+        const plotH = h - pad.top - pad.bottom;
+
+        const maxCount = Math.max(...chartData.map((d) => d.count), 1);
+        const yStep = Math.max(1, Math.ceil(maxCount / 4));
+
+        // grid + y labels
+        ctx.strokeStyle = "#e7eaf0";
+        ctx.lineWidth = 1;
+        ctx.fillStyle = "#9aa5b5";
+        ctx.font = "10px Inter, sans-serif";
+        ctx.textAlign = "right";
+        ctx.textBaseline = "middle";
+        for (let i = 0; i <= maxCount; i += yStep) {
+          const y = pad.top + plotH - (i / maxCount) * plotH;
+          ctx.beginPath();
+          ctx.moveTo(pad.left, y);
+          ctx.lineTo(w - pad.right, y);
+          ctx.stroke();
+          ctx.fillText(i, pad.left - 6, y);
+        }
+
+        const n = chartData.length;
+        const xFor = (i) =>
+          n === 1 ? pad.left + plotW / 2 : pad.left + (i / (n - 1)) * plotW;
+        const yFor = (v) => pad.top + plotH - (v / maxCount) * plotH;
+
+        // line
+        ctx.beginPath();
+        chartData.forEach((d, i) => {
+          const x = xFor(i),
+            y = yFor(d.count);
+          i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        });
+        ctx.strokeStyle = "#2563eb";
+        ctx.lineWidth = 2.2;
+        ctx.lineJoin = "round";
+        ctx.stroke();
+
+        // area
+        ctx.lineTo(xFor(n - 1), pad.top + plotH);
+        ctx.lineTo(xFor(0), pad.top + plotH);
+        ctx.closePath();
+        ctx.fillStyle = "rgba(37,99,235,0.08)";
+        ctx.fill();
+
+        // points
+        chartData.forEach((d, i) => {
+          const x = xFor(i),
+            y = yFor(d.count);
+          ctx.beginPath();
+          ctx.arc(x, y, 3.5, 0, Math.PI * 2);
+          ctx.fillStyle = "#2563eb";
+          ctx.fill();
+          ctx.strokeStyle = "#fff";
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        });
+
+        // x labels
+        ctx.fillStyle = "#9aa5b5";
+        ctx.font = "9px Inter, sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "top";
+        const step = Math.max(1, Math.ceil(n / 6));
+        chartData.forEach((d, i) => {
+          if (i % step === 0 || i === n - 1) {
+            ctx.fillText(d.date.slice(5), xFor(i), pad.top + plotH + 6);
+          }
+        });
+      }
+
+      /* =========================================================
+   API
+   ========================================================= */
+      async function loadAll() {
+        try {
+          const res = await fetch(API_BASE, {
+            headers: { Accept: "application/json" },
+          });
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          const contentType = res.headers.get("content-type") || "";
+          if (!contentType.includes("application/json")) {
+            throw new Error("API returned HTML instead of JSON");
+          }
+          DATA = await res.json();
+          if (!DATA.meta) throw new Error("Routine API returned incomplete data");
+          showError("");
+          renderEverything();
+        } catch (err) {
+          console.error(err);
+          showError("⚠️ Could not load routine data from Supabase. " + err.message);
+        }
+      }
+
+      async function postRecord(taskId, completed) {
+        const entry = {
+          taskId,
+          completed,
+          timestamp: new Date().toISOString(),
+        };
+
+        // optimistic
+        if (!DATA.records) DATA.records = [];
+        DATA.records.push(entry);
+        updateStatsUI();
+        drawChart();
+
+        try {
+          const res = await fetch(API_BASE, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(entry),
+          });
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          const payload = await res.json();
+          if (payload && Array.isArray(payload.records)) {
+            DATA.records = payload.records; // sync with server truth
+            updateStatsUI();
+            drawChart();
+            // re-apply checkbox states
+            const states = deriveTaskStates();
+            TASK_IDS.forEach((id) => {
+              const el = document.getElementById(id);
+              if (el) {
+                el.checked = !!states[id];
+                el.closest(".task").classList.toggle("done", el.checked);
+              }
+            });
+          }
+          showError("");
+        } catch (err) {
+          console.error(err);
+          showError(
+            "⚠️ Could not save progress to Supabase. " +
+              err.message,
+          );
+        }
+      }
+
+      /* =========================================================
+   MASTER RENDER
+   ========================================================= */
+      function renderEverything() {
+        renderMeta();
+        renderResources();
+        renderTracker();
+        renderRoutine();
+        renderPerformanceLabels();
+        updateStatsUI();
+        drawChart();
+      }
+
+      /* =========================================================
+   FILTERS + RESIZE
+   ========================================================= */
+      function bindFilters() {
+        const onChange = () => {
+          updateStatsUI();
+          drawChart();
+        };
+        filterFrom.addEventListener("change", onChange);
+        filterTo.addEventListener("change", onChange);
+        resetFilter.addEventListener("click", () => {
+          filterFrom.value = "";
+          filterTo.value = "";
+          onChange();
+        });
+      }
+      let rt;
+      window.addEventListener("resize", () => {
+        clearTimeout(rt);
+        rt = setTimeout(drawChart, 120);
+      });
+
+      /* =========================================================
+   UTILS
+   ========================================================= */
+      function escapeHtml(s) {
+        return String(s ?? "").replace(
+          /[&<>"']/g,
+          (c) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[c],
+        );
+      }
+      function escapeAttr(s) {
+        return escapeHtml(s);
+      }
+
+      /* =========================================================
+   INIT
+   ========================================================= */
+      (async function init() {
+        bindFilters();
+        await loadAll();
+      })();
+    </script>
+  </body>
+</html>
