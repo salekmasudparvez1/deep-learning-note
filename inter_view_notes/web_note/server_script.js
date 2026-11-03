@@ -1,179 +1,202 @@
-// server_script.js  →  deployed as /api (via vercel.json rewrite)
-import fs from "fs";
-import path from "path";
-import initialData from "./api/data.json" with { type: "json" };
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_KEY =
+  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY;
 
-const DATA_FILE = path.join(process.cwd(), "api", "data.json");
-const KV_URL = process.env.KV_REST_API_URL;
-const KV_TOKEN = process.env.KV_REST_API_TOKEN;
-const KV_KEY = "parvez-ai-routine";
+const content = {
+  meta: {
+    siteTitle: "Parvez AI Eng Routine",
+    brandMark: "PA",
+    hero: {
+      eyebrow: "Personal learning dashboard",
+      titleLine1: "Prepare with focus.",
+      titleLine2: "Build interview confidence.",
+      description:
+        "A simple home for AI/ML interview resources, hands-on coding practice, and your daily study routine. Keep it consistent, one problem at a time.",
+      primaryCta: { label: "Practice on LeetML ↗", url: "https://leetml.org/" },
+      secondaryCta: {
+        label: "Open Excel problem tracker ↗",
+        url: "https://docs.google.com/spreadsheets/d/1bp1rbBAdUY1kVHD86aSO1NHAPJ9pfE8S2DT0N_4G_9A/edit?usp=sharing",
+      },
+    },
+    nav: [
+      { label: "Resources", href: "#resources" },
+      { label: "Routine", href: "/routine" },
+      { label: "Dashboard", href: "/dashboard" },
+    ],
+    footer: {
+      left: "Parvez AI Eng Routine",
+      right: "Simple routine. Consistent practice. Better interviews.",
+    },
+  },
+  tracker: {
+    heading: "Problem tracker",
+    subheading: "Keep your solved questions and progress in one place.",
+    cardTitle: "AI Engineer — Excel / Google Sheets problem list",
+    cardDescription: "Your linked spreadsheet for tracking coding problems and study progress.",
+    buttonLabel: "Open spreadsheet ↗",
+    buttonUrl:
+      "https://docs.google.com/spreadsheets/d/1bp1rbBAdUY1kVHD86aSO1NHAPJ9pfE8S2DT0N_4G_9A/edit?usp=sharing",
+  },
+  performance: {
+    heading: "📈 Performance over time",
+    statsLabels: {
+      total: "Total tasks completed",
+      days: "Active days",
+      streak: "Current streak",
+    },
+  },
+  resources: {
+    heading: "Interview resources",
+    subheading: "Curated links for real-world preparation and practice.",
+    items: [
+      ["AI", "Guide · 2026", "AIMLInterviews", "https://github.com/alirezadir/AIMLInterviews"],
+      ["ML", "Question bank", "MLQuestions", "https://github.com/topics/machine-learning-interview-questions"],
+      ["★", "Curated", "Awesome AI Interviews", "https://github.com/JustInCache/awesome-ai-interviews"],
+      ["DL", "Reference", "AI/ML/DL Interview Resources", "https://github.com/DengZhiyuan-math/awesome-ai-ml-dl-interview-resources/blob/main/README.md"],
+      ["LC", "Community", "LeetCode Discuss", "https://leetcode.com/discuss/"],
+      ["LM", "Practice", "LeetML", "https://leetml.org/problems.html"],
+    ].map(([icon, tag, title, linkUrl]) => ({
+      icon,
+      tag,
+      title,
+      linkUrl,
+      linkText: "Explore resource ↗",
+      description: `Explore ${title} for focused AI/ML interview preparation.`,
+    })),
+  },
+};
+
+function assertConfig() {
+  if (!SUPABASE_URL || !SUPABASE_KEY) {
+    throw new Error("SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required.");
+  }
+}
+
+async function supabase(pathname, options = {}) {
+  assertConfig();
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/${pathname}`, {
+    ...options,
+    headers: {
+      apikey: SUPABASE_KEY,
+      Authorization: `Bearer ${SUPABASE_KEY}`,
+      "Content-Type": "application/json",
+      Prefer: "return=representation",
+      ...(options.headers || {}),
+    },
+  });
+  const body = await response.json().catch(() => null);
+  if (!response.ok) {
+    throw new Error(body?.message || body?.hint || `Supabase HTTP ${response.status}`);
+  }
+  return body;
+}
+
+function bodyOf(req) {
+  return !req.body ? {} : typeof req.body === "string" ? JSON.parse(req.body) : req.body;
+}
+
+function id(prefix) {
+  return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
+}
 
 async function readData() {
-  if (KV_URL && KV_TOKEN) {
-    const response = await fetch(KV_URL, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${KV_TOKEN}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(["GET", KV_KEY]),
-    });
-    if (!response.ok) throw new Error(`KV read failed with HTTP ${response.status}`);
-    const result = await response.json();
-    return result.result ? JSON.parse(result.result) : structuredClone(initialData);
-  }
-
-  try {
-    const raw = fs.readFileSync(DATA_FILE, "utf8");
-    return JSON.parse(raw);
-  } catch {
-    return structuredClone(initialData);
-  }
-}
-
-async function writeData(data) {
-  if (KV_URL && KV_TOKEN) {
-    const response = await fetch(KV_URL, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${KV_TOKEN}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(["SET", KV_KEY, JSON.stringify(data)]),
-    });
-    if (!response.ok) throw new Error(`KV write failed with HTTP ${response.status}`);
-    return;
-  }
-
-  if (process.env.VERCEL) {
-    throw new Error(
-      "Production storage is not configured. Add KV_REST_API_URL and KV_REST_API_TOKEN.",
-    );
-  }
-
-  fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), "utf8");
-}
-
-function getBody(req) {
-  if (!req.body) return {};
-  return typeof req.body === "string" ? JSON.parse(req.body) : req.body;
-}
-
-function findTask(data, taskId) {
-  for (const group of data.routine?.groups || []) {
-    const task = (group.tasks || []).find((item) => item.id === taskId);
-    if (task) return { group, task };
-  }
-  return null;
-}
-
-function makeId(prefix) {
-  return `${prefix}-${Date.now().toString(36)}-${Math.random()
-    .toString(36)
-    .slice(2, 7)}`;
+  const [groups, records] = await Promise.all([
+    supabase("routine_groups?select=id,title,subtitle,sort_order&order=sort_order.asc"),
+    supabase("routine_records?select=task_id,completed,timestamp&order=timestamp.asc"),
+  ]);
+  const topics = await supabase(
+    `routine_topics?select=id,group_id,title,hint,sort_order&order=sort_order.asc`,
+  );
+  const topicsByGroup = new Map();
+  topics.forEach((topic) => {
+    const list = topicsByGroup.get(topic.group_id) || [];
+    list.push({ id: topic.id, title: topic.title, hint: topic.hint || "" });
+    topicsByGroup.set(topic.group_id, list);
+  });
+  return {
+    ...content,
+    routine: {
+      heading: "Daily routine",
+      subheading: "Check tasks as you complete them. Progress is saved securely in Supabase.",
+      groups: groups.map((group) => ({
+        id: group.id,
+        title: group.title,
+        subtitle: group.subtitle || "",
+        tasks: topicsByGroup.get(group.id) || [],
+      })),
+    },
+    records: records.map((record) => ({
+      taskId: record.task_id,
+      completed: record.completed,
+      timestamp: record.timestamp,
+    })),
+  };
 }
 
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-
-  if (req.method === "OPTIONS") {
-    res.status(204).end();
-    return;
-  }
-
-  let data;
-  try {
-    data = await readData();
-  } catch (error) {
-    res.status(500).json({ error: `api.json is missing or invalid: ${error.message}` });
-    return;
-  }
-
-  if (req.method === "GET") {
-    res.status(200).json(data);
-    return;
-  }
+  if (req.method === "OPTIONS") return res.status(204).end();
 
   try {
-    const body = getBody(req);
-    const type = body.type || "record";
+    if (req.method === "GET") return res.status(200).json(await readData());
+    const body = bodyOf(req);
 
-    if (type === "record" && req.method === "POST") {
-      const { taskId, completed } = body;
-      if (!taskId || typeof completed !== "boolean" || !findTask(data, taskId)) {
-        res.status(400).json({ error: "A valid taskId and completed boolean are required." });
-        return;
+    if (req.method === "POST" && (body.type || "record") === "record") {
+      const task = await supabase(`routine_topics?id=eq.${encodeURIComponent(body.taskId)}&select=id`);
+      if (!body.taskId || typeof body.completed !== "boolean" || !task.length) {
+        return res.status(400).json({ error: "A valid taskId and completed boolean are required." });
       }
-      const entry = {
-        taskId,
-        completed,
-        timestamp: body.timestamp || new Date().toISOString(),
-      };
-      if (!Array.isArray(data.records)) data.records = [];
-      data.records.push(entry);
-      await writeData(data);
-      res.status(200).json({ ok: true, entry, records: data.records });
-      return;
+      const [entry] = await supabase("routine_records", {
+        method: "POST",
+        body: JSON.stringify({
+          task_id: body.taskId,
+          completed: body.completed,
+          timestamp: body.timestamp || new Date().toISOString(),
+        }),
+      });
+      return res.status(200).json({ ok: true, entry, ...(await readData()) });
     }
 
-    if (type === "group" && req.method === "POST") {
-      const { title, subtitle = "" } = body;
-      if (!title?.trim()) {
-        res.status(400).json({ error: "Group title is required." });
-        return;
-      }
-      const group = { id: makeId("group"), title: title.trim(), subtitle: subtitle.trim(), tasks: [] };
-      data.routine.groups = [...(data.routine.groups || []), group];
-      await writeData(data);
-      res.status(201).json({ ok: true, group });
-      return;
+    if (req.method === "POST" && body.type === "group") {
+      if (!body.title?.trim()) return res.status(400).json({ error: "Group title is required." });
+      const [group] = await supabase("routine_groups", {
+        method: "POST",
+        body: JSON.stringify({ id: id("group"), title: body.title.trim(), subtitle: (body.subtitle || "").trim() }),
+      });
+      return res.status(201).json({ ok: true, group });
     }
 
-    if (type === "topic" && req.method === "POST") {
-      const { groupId, title, hint = "" } = body;
-      const group = (data.routine?.groups || []).find((item) => item.id === groupId);
-      if (!group || !title?.trim()) {
-        res.status(400).json({ error: "A valid groupId and topic title are required." });
-        return;
+    if (req.method === "POST" && body.type === "topic") {
+      if (!body.groupId || !body.title?.trim()) {
+        return res.status(400).json({ error: "A valid groupId and topic title are required." });
       }
-      const task = { id: makeId("topic"), title: title.trim(), hint: hint.trim() };
-      group.tasks = [...(group.tasks || []), task];
-      await writeData(data);
-      res.status(201).json({ ok: true, task });
-      return;
+      const [task] = await supabase("routine_topics", {
+        method: "POST",
+        body: JSON.stringify({ id: id("topic"), group_id: body.groupId, title: body.title.trim(), hint: (body.hint || "").trim() }),
+      });
+      return res.status(201).json({ ok: true, task });
     }
 
-    if (type === "topic" && req.method === "PUT") {
-      const { taskId, title, hint = "" } = body;
-      const result = findTask(data, taskId);
-      if (!result || !title?.trim()) {
-        res.status(400).json({ error: "A valid taskId and topic title are required." });
-        return;
-      }
-      result.task.title = title.trim();
-      result.task.hint = hint.trim();
-      await writeData(data);
-      res.status(200).json({ ok: true, task: result.task });
-      return;
+    if (req.method === "PUT" && body.type === "topic") {
+      if (!body.taskId || !body.title?.trim()) return res.status(400).json({ error: "A valid taskId and topic title are required." });
+      const [task] = await supabase(`routine_topics?id=eq.${encodeURIComponent(body.taskId)}`, {
+        method: "PATCH",
+        body: JSON.stringify({ title: body.title.trim(), hint: (body.hint || "").trim() }),
+      });
+      return res.status(200).json({ ok: true, task });
     }
 
-    if (type === "topic" && req.method === "DELETE") {
-      const result = findTask(data, body.taskId);
-      if (!result) {
-        res.status(404).json({ error: "Topic not found." });
-        return;
-      }
-      result.group.tasks = result.group.tasks.filter((task) => task.id !== body.taskId);
-      data.records = (data.records || []).filter((record) => record.taskId !== body.taskId);
-      await writeData(data);
-      res.status(200).json({ ok: true });
-      return;
+    if (req.method === "DELETE" && body.type === "topic") {
+      if (!body.taskId) return res.status(400).json({ error: "taskId is required." });
+      await supabase(`routine_topics?id=eq.${encodeURIComponent(body.taskId)}`, { method: "DELETE" });
+      return res.status(200).json({ ok: true });
     }
 
-    res.status(405).json({ error: "Unsupported method or request type." });
+    return res.status(405).json({ error: "Unsupported method or request type." });
   } catch (error) {
-    res.status(400).json({ error: `Invalid request: ${error.message}` });
+    console.error(error);
+    return res.status(500).json({ error: error.message });
   }
 }

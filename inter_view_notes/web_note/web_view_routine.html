@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#f7f8fa" />
     <meta
       name="description"
-      content="Parvez AI Engineer Routine — a dynamic dashboard fed by api.json."
+      content="Parvez AI Engineer Routine — a dynamic dashboard backed by Supabase."
     />
     <title>Parvez AI Eng Routine</title>
     <style>
@@ -570,8 +570,7 @@
    CONFIG
    ========================================================= */
       const API_BASE = "/api"; // JSON API for routine data and completion records
-      const STATIC_DATA = "api/data.json"; // fallback for python/http static previews
-      let DATA = null; // whole api.json payload
+      let DATA = null; // whole Supabase-backed API payload
       let TASK_IDS = []; // dynamically derived from DATA.routine.groups
 
       /* DOM refs */
@@ -934,27 +933,12 @@
             throw new Error("API returned HTML instead of JSON");
           }
           DATA = await res.json();
-          if (!DATA.meta) throw new Error("api.json missing meta");
+          if (!DATA.meta) throw new Error("Routine API returned incomplete data");
           showError("");
           renderEverything();
         } catch (err) {
-          try {
-            const fallback = await fetch(STATIC_DATA);
-            if (!fallback.ok) throw new Error("HTTP " + fallback.status);
-            DATA = await fallback.json();
-            const savedRecords = localStorage.getItem("routineRecords");
-            if (savedRecords) DATA.records = JSON.parse(savedRecords);
-            renderEverything();
-            showError(
-              "Static preview mode: progress is saved in this browser. Use Vercel for shared dashboard updates.",
-            );
-          } catch (fallbackError) {
-            console.error(err, fallbackError);
-            showError(
-              "⚠️ Could not load routine data. Check api.json and the server configuration. " +
-                fallbackError.message,
-            );
-          }
+          console.error(err);
+          showError("⚠️ Could not load routine data from Supabase. " + err.message);
         }
       }
 
@@ -995,10 +979,9 @@
           }
           showError("");
         } catch (err) {
-          localStorage.setItem("routineRecords", JSON.stringify(DATA.records));
           console.error(err);
           showError(
-            "Static preview mode: change saved in this browser. " +
+            "⚠️ Could not save progress to Supabase. " +
               err.message,
           );
         }
