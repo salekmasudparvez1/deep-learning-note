@@ -3,6 +3,14 @@
   "cleanUrls": true,
   "rewrites": [
     {
+      "source": "/dashboard",
+      "destination": "/dashboard.html"
+    },
+    {
+      "source": "/routine",
+      "destination": "/web_view_routine.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/web_view_routine.html"
     }
