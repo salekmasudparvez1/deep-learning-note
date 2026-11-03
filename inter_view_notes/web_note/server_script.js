@@ -1,12 +1,7 @@
 import { bodyOf, createId, supabase } from "./lib/supabase.js";
+import { configureCors } from "./lib/cors.js";
 import { readRoutine } from "./lib/routine.js";
 import questionsHandler from "./lib/questions.js";
-
-function configureCors(res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-}
 
 async function routineHandler(req, res, body) {
   if (req.method === "GET") return res.status(200).json(await readRoutine());
@@ -82,16 +77,16 @@ async function routineHandler(req, res, body) {
 }
 
 export default async function handler(req, res) {
-  configureCors(res);
+  configureCors(req, res);
   if (req.method === "OPTIONS") return res.status(204).end();
 
   try {
     const path = (req.url || "").split("?")[0];
     if (path.includes("/questions")) {
       req.body = bodyOf(req);
-      return questionsHandler(req, res);
+      return await questionsHandler(req, res);
     }
-    return routineHandler(req, res, bodyOf(req));
+    return await routineHandler(req, res, bodyOf(req));
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: error.message });
