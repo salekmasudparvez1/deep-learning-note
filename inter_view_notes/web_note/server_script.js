@@ -21,7 +21,7 @@ const content = {
     nav: [
       { label: "Resources", href: "#resources" },
       { label: "Routine", href: "/routine" },
-
+      { label: "Questions", href: "/question" },
       { label: "Dashboard", href: "/dashboard" },
     ],
     footer: {
