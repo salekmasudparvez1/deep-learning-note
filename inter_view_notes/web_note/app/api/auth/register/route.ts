@@ -2,10 +2,15 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
 import { setSession } from "@/lib/auth";
+import { apiError } from "@/lib/api-errors";
 
 export async function POST(request: Request) {
   try {
-    const { email, password, name } = await request.json();
+    const body = await request.json().catch(() => null);
+    if (!body || typeof body !== "object") {
+      return NextResponse.json({ error: "A valid JSON body is required." }, { status: 400 });
+    }
+    const { email, password, name } = body;
     const normalized = String(email ?? "").trim().toLowerCase();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized) || String(password ?? "").length < 8) {
       return NextResponse.json({ error: "Use a valid email and a password of at least 8 characters." }, { status: 400 });
@@ -25,7 +30,6 @@ export async function POST(request: Request) {
     await setSession(rows[0]);
     return NextResponse.json({ user: rows[0] }, { status: 201 });
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: "Could not create account." }, { status: 500 });
+    return apiError(error, "Could not create account.");
   }
 }

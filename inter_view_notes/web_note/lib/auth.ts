@@ -11,7 +11,7 @@ const accessMinutes = 15;
 const refreshDays = 30;
 
 export type Role = "admin" | "user";
-type User = { id: string; email: string; name: string; role: Role };
+export type User = { id: string; email: string; name: string; role: Role };
 type TokenRow = { id: string; user_id: string; expires_at: string; revoked_at: string | null };
 
 function assertSecret() {
@@ -48,9 +48,17 @@ export async function currentUser(): Promise<User | null> {
   const token = (await cookies()).get(ACCESS_COOKIE)?.value;
   if (!token) return null;
   try {
+    assertSecret();
     const { payload } = await jwtVerify(token, accessSecret);
-      const role = payload.role === "admin" ? "admin" : "user";
-      return { id: String(payload.sub), email: String(payload.email), name: String(payload.name), role };
+    if (
+      typeof payload.sub !== "string" ||
+      typeof payload.email !== "string" ||
+      typeof payload.name !== "string"
+    ) {
+      return null;
+    }
+    const role = payload.role === "admin" ? "admin" : "user";
+    return { id: payload.sub, email: payload.email, name: payload.name, role };
   } catch { return null; }
 }
 export async function refreshSession(): Promise<User | null> {
