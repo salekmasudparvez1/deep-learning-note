@@ -5,6 +5,21 @@ import { apiError } from "@/lib/api-errors";
 const url = process.env.SUPABASE_URL?.replace(/\/$/, "");
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
+type RoutineGroup = {
+  id: string;
+  title: string;
+  subtitle: string;
+  sort_order: number;
+};
+
+type RoutineTopic = {
+  id: string;
+  group_id: string;
+  title: string;
+  hint: string;
+  sort_order: number;
+};
+
 async function adminDb<T>(path: string, init: RequestInit = {}): Promise<T> {
   if (!url || !serviceKey) {
     throw new Error("Supabase service role configuration is missing");
@@ -44,8 +59,8 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
-    const groups = await adminDb<any[]>("routine_groups?select=*&order=sort_order.asc");
-    const topics = await adminDb<any[]>("routine_topics?select=*&order=sort_order.asc");
+    const groups = await adminDb<RoutineGroup[]>("routine_groups?select=*&order=sort_order.asc");
+    const topics = await adminDb<RoutineTopic[]>("routine_topics?select=*&order=sort_order.asc");
 
     return NextResponse.json({ groups, topics });
   } catch (error) {
@@ -65,7 +80,7 @@ export async function POST(request: Request) {
 
     if (type === "group") {
       const { id, title, subtitle, sort_order } = data;
-      const newGroup = await adminDb("routine_groups", {
+      const newGroup = await adminDb<RoutineGroup[]>("routine_groups", {
         method: "POST",
         body: JSON.stringify({
           id,
@@ -79,7 +94,7 @@ export async function POST(request: Request) {
 
     if (type === "topic") {
       const { id, group_id, title, hint, sort_order } = data;
-      const newTopic = await adminDb("routine_topics", {
+      const newTopic = await adminDb<RoutineTopic[]>("routine_topics", {
         method: "POST",
         body: JSON.stringify({
           id,
@@ -109,7 +124,7 @@ export async function PATCH(request: Request) {
     const { type, id, data } = body;
 
     if (type === "group") {
-      const updated = await adminDb(
+      const updated = await adminDb<RoutineGroup[]>(
         `routine_groups?id=eq.${encodeURIComponent(id)}`,
         {
           method: "PATCH",
@@ -120,7 +135,7 @@ export async function PATCH(request: Request) {
     }
 
     if (type === "topic") {
-      const updated = await adminDb(
+      const updated = await adminDb<RoutineTopic[]>(
         `routine_topics?id=eq.${encodeURIComponent(id)}`,
         {
           method: "PATCH",

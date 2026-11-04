@@ -1,10 +1,17 @@
 import { NextResponse } from "next/server";
 import { currentUser } from "@/lib/auth";
-import { db } from "@/lib/db";
 import { apiError } from "@/lib/api-errors";
 
 const url = process.env.SUPABASE_URL?.replace(/\/$/, "");
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+type AdminUser = {
+  id: string;
+  email: string;
+  name: string;
+  role: string;
+  created_at?: string;
+};
 
 async function adminDb<T>(path: string, init: RequestInit = {}): Promise<T> {
   if (!url || !serviceKey) {
@@ -45,7 +52,7 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
-    const users = await adminDb<any[]>("users?select=id,email,name,role,created_at&order=created_at.desc");
+    const users = await adminDb<AdminUser[]>("users?select=id,email,name,role,created_at&order=created_at.desc");
     return NextResponse.json({ users });
   } catch (error) {
     return apiError(error, "Failed to fetch users");
@@ -66,7 +73,7 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: "Invalid request" }, { status: 400 });
     }
 
-    const updated = await adminDb(
+    const updated = await adminDb<AdminUser[]>(
       `users?id=eq.${encodeURIComponent(id)}&select=id,email,name,role`,
       {
         method: "PATCH",
