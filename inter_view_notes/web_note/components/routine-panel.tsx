@@ -33,16 +33,19 @@ export function RoutinePanel() {
   );
   return (
     <section className="section">
-      <span className="eyebrow">Daily routine</span>
-      <h1>Small steps, every day.</h1>
-      <p className="sub">
-        Check tasks as you complete them. Progress is saved securely to your
-        account.
-      </p>
+      <div className="section-head">
+        <div>
+          <span className="eyebrow">Daily routine</span>
+          <h1>Small steps, every day.</h1>
+          <p className="sub">
+            Check tasks as you complete them. Progress is saved securely to your account.
+          </p>
+        </div>
+      </div>
       {error && <p className="error">{error}</p>}
       <div className="routine">
         {groups.map((group) => (
-          <article className="routine-card" key={group.id}>
+          <article className="routine-card card" key={group.id}>
             <h3>{group.title}</h3>
             {group.tasks.map((task) => (
               <label className="task" key={task.id}>

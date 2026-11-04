@@ -157,7 +157,7 @@ export function QuestionsPanel() {
         <div>
           <span className="eyebrow">Knowledge library</span>
           <h1>Interview questions</h1>
-          <p>Click any question to open its answer, review it, or update its progress.</p>
+          <p>Click any question to open its answer, review it, or update its progress. Build your personal knowledge base one question at a time.</p>
         </div>
         <button className="btn primary" onClick={openCreate}>＋ New question</button>
       </div>
@@ -174,7 +174,7 @@ export function QuestionsPanel() {
 
       {error && <p className="error">{error}</p>}
       {loading ? <div className="card empty-state"><p>Loading your question bank...</p></div> : filteredQuestions.length === 0 ? (
-        <div className="card empty-state"><div className="empty-icon">?</div><h2>{questions.length ? "No matching questions" : "Your question bank is empty"}</h2><p>{questions.length ? "Try changing the filters or search term." : "Add a question to start building your interview library."}</p>{!questions.length && <button className="btn primary" onClick={openCreate}>Add your first question</button>}</div>
+        <div className="card empty-state"><div className="empty-icon">📚</div><h2>{questions.length ? "No matching questions" : "Your question bank is empty"}</h2><p>{questions.length ? "Try changing the filters or search term." : "Add a question to start building your interview library."}</p>{!questions.length && <button className="btn primary" onClick={openCreate}>Add your first question</button>}</div>
       ) : (
         <div className="question-grid">
           {filteredQuestions.map((item) => (
@@ -182,7 +182,7 @@ export function QuestionsPanel() {
               <div className="question-card-top"><span className={`difficulty difficulty-${item.difficulty.toLowerCase()}`}>{item.difficulty}</span><span className={`status status-${item.status}`}>{statusLabels[item.status]}</span></div>
               <h2>{item.question}</h2>
               <p className="answer-preview">{item.answer || "No answer added yet. Click to add one."}</p>
-              <div className="question-card-bottom"><span>{item.category || "Uncategorized"}{item.topic ? ` · ${item.topic}` : ""}</span><span className="open-link">Open →</span></div>
+              <div className="question-card-bottom"><span>{item.category || "Uncategorized"}{item.topic ? ` · ${item.topic}` : ""}</span><span className="open-link">Read answer →</span></div>
             </button>
           ))}
         </div>
