@@ -24,7 +24,7 @@ export function isMissingSchemaError(error: unknown) {
   );
 }
 
-export async function db<T>(path: string, init: RequestInit = {}, useServiceRole: boolean = false): Promise<T> {
+export async function db<T>(path: string, init: RequestInit = {}): Promise<T> {
   if (!url || !key) {
     throw new DatabaseError(
       "Supabase server configuration is missing. Check your environment variables.",

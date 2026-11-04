@@ -7,12 +7,27 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="hero book-hero">
         <div className="hero-content">
-          <span className="eyebrow"><i className="dot"/>Educational Platform for AI/ML Engineers</span>
-          <h1>Master Your Craft.<br/>One Chapter at a Time.</h1>
-          <p>A sophisticated learning platform designed for educators and engineers. Build your interview knowledge with a structured, book-like approach to learning.</p>
+          <span className="eyebrow">
+            <i className="dot" />
+            Educational Platform for AI/ML Engineers
+          </span>
+          <h1>
+            Master Your Craft.
+            <br />
+            One Chapter at a Time.
+          </h1>
+          <p>
+            A sophisticated learning platform designed for educators and
+            engineers. Build your interview knowledge with a structured,
+            book-like approach to learning.
+          </p>
           <div className="hero-actions">
-            <Link className="btn primary" href="/auth">Start Learning Free</Link>
-            <Link className="btn" href="/questions">Browse Questions</Link>
+            <Link className="btn primary" href="/auth">
+              Start Learning Free
+            </Link>
+            <Link className="btn" href="/questions">
+              Browse Questions
+            </Link>
           </div>
         </div>
         <div className="hero-visual">
@@ -30,7 +45,10 @@ export default function HomePage() {
           <div>
             <span className="eyebrow">Why Choose Us</span>
             <h2>Designed for Effective Learning</h2>
-            <p>Everything you need to prepare for AI/ML interviews, organized like a well-structured textbook.</p>
+            <p>
+              Everything you need to prepare for AI/ML interviews, organized
+              like a well-structured textbook.
+            </p>
           </div>
         </div>
         <div className="grid">
@@ -57,17 +75,26 @@ export default function HomePage() {
           <div className="step">
             <div className="step-number">1</div>
             <h3>Create Your Account</h3>
-            <p>Sign up in seconds. Your personal learning space is ready instantly.</p>
+            <p>
+              Sign up in seconds. Your personal learning space is ready
+              instantly.
+            </p>
           </div>
           <div className="step">
             <div className="step-number">2</div>
             <h3>Build Your Question Bank</h3>
-            <p>Add interview questions, organize by topic, and write detailed answers.</p>
+            <p>
+              Add interview questions, organize by topic, and write detailed
+              answers.
+            </p>
           </div>
           <div className="step">
             <div className="step-number">3</div>
             <h3>Practice Daily</h3>
-            <p>Follow your routine, track progress, and master each topic systematically.</p>
+            <p>
+              Follow your routine, track progress, and master each topic
+              systematically.
+            </p>
           </div>
         </div>
       </section>
@@ -78,7 +105,10 @@ export default function HomePage() {
           <div>
             <span className="eyebrow">Curated Resources</span>
             <h2>Interview Preparation Materials</h2>
-            <p>Hand-picked resources from the AI/ML community to supplement your learning.</p>
+            <p>
+              Hand-picked resources from the AI/ML community to supplement your
+              learning.
+            </p>
           </div>
         </div>
         <div className="grid">
@@ -89,8 +119,17 @@ export default function HomePage() {
                 <span className="tag">{item.tag}</span>
               </div>
               <h3>{item.title}</h3>
-              <p>Explore this resource for focused AI/ML interview preparation.</p>
-              <a className="card-link" href={item.url} target="_blank" rel="noopener noreferrer">Explore resource ↗</a>
+              <p>
+                Explore this resource for focused AI/ML interview preparation.
+              </p>
+              <a
+                className="card-link"
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Explore resource ↗
+              </a>
             </article>
           ))}
         </div>
@@ -102,17 +141,22 @@ export default function HomePage() {
           <div>
             <span className="eyebrow">Success Stories</span>
             <h2>Trusted by Engineers</h2>
-            <p>See how professionals have used our platform to advance their careers.</p>
+            <p>
+              See how professionals have used our platform to advance their
+              careers.
+            </p>
           </div>
         </div>
         <div className="testimonials-grid">
           {testimonials.map((testimonial, index) => (
             <article className="card testimonial-card" key={index}>
               <div className="testimonial-content">
-                <p>"{testimonial.content}"</p>
+                <p>&quot;{testimonial.content}&quot;</p>
               </div>
               <div className="testimonial-author">
-                <div className="author-avatar">{testimonial.name.charAt(0)}</div>
+                <div className="author-avatar">
+                  {testimonial.name.charAt(0)}
+                </div>
                 <div>
                   <h4>{testimonial.name}</h4>
                   <span>{testimonial.role}</span>
@@ -134,8 +178,13 @@ export default function HomePage() {
         </div>
         <div className="pricing-grid">
           {pricing.map((plan, index) => (
-            <article className={`card pricing-card ${plan.popular ? 'popular' : ''}`} key={index}>
-              {plan.popular && <div className="popular-badge">Most Popular</div>}
+            <article
+              className={`card pricing-card ${plan.popular ? "popular" : ""}`}
+              key={index}
+            >
+              {plan.popular && (
+                <div className="popular-badge">Most Popular</div>
+              )}
               <h3>{plan.name}</h3>
               <div className="price">
                 <span className="amount">{plan.price}</span>
@@ -149,7 +198,7 @@ export default function HomePage() {
                   </li>
                 ))}
               </ul>
-              <button className={`btn ${plan.popular ? 'primary' : ''}`}>
+              <button className={`btn ${plan.popular ? "primary" : ""}`}>
                 {plan.cta}
               </button>
             </article>
@@ -161,10 +210,16 @@ export default function HomePage() {
       <section className="section cta-section">
         <div className="cta-card">
           <h2>Ready to Start Your Journey?</h2>
-          <p>Join thousands of engineers preparing for their dream AI/ML roles.</p>
+          <p>
+            Join thousands of engineers preparing for their dream AI/ML roles.
+          </p>
           <div className="cta-actions">
-            <Link className="btn primary" href="/auth">Get Started Free</Link>
-            <Link className="btn" href="/questions">View Demo</Link>
+            <Link className="btn primary" href="/auth">
+              Get Started Free
+            </Link>
+            <Link className="btn" href="/questions">
+              View Demo
+            </Link>
           </div>
         </div>
       </section>

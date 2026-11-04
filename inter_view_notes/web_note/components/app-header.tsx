@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 type User = { id: string; email: string; name: string; role: "admin" | "user" };
 
 export function AppHeader() {
+  const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -30,7 +32,7 @@ export function AppHeader() {
   async function handleLogout() {
     try {
       await fetch("/api/auth/logout", { method: "POST" });
-      window.location.href = "/";
+      router.refresh();
     } catch (error) {
       console.error("Logout failed:", error);
     }
@@ -48,20 +50,41 @@ export function AppHeader() {
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label="Toggle menu"
         >
-          <span className={`hamburger ${mobileMenuOpen ? 'open' : ''}`}>
+          <span className={`hamburger ${mobileMenuOpen ? "open" : ""}`}>
             <span></span>
             <span></span>
             <span></span>
           </span>
         </button>
-        <nav className={`navlinks ${mobileMenuOpen ? 'open' : ''}`} aria-label="Primary navigation">
-          <Link href="/#features" onClick={() => setMobileMenuOpen(false)}>Features</Link>
-          <Link href="/#resources" onClick={() => setMobileMenuOpen(false)}>Resources</Link>
-          <Link href="/#pricing" onClick={() => setMobileMenuOpen(false)}>Pricing</Link>
-          <Link href="/routine" onClick={() => setMobileMenuOpen(false)}>Routine</Link>
-          <Link href="/questions" onClick={() => setMobileMenuOpen(false)}>Questions</Link>
-          {user && <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>Dashboard</Link>}
-          {user?.role === "admin" && <Link href="/admin" onClick={() => setMobileMenuOpen(false)}>Admin</Link>}
+        <nav
+          className={`navlinks ${mobileMenuOpen ? "open" : ""}`}
+          aria-label="Primary navigation"
+        >
+          <Link href="/#features" onClick={() => setMobileMenuOpen(false)}>
+            Features
+          </Link>
+          <Link href="/#resources" onClick={() => setMobileMenuOpen(false)}>
+            Resources
+          </Link>
+          <Link href="/#pricing" onClick={() => setMobileMenuOpen(false)}>
+            Pricing
+          </Link>
+          <Link href="/routine" onClick={() => setMobileMenuOpen(false)}>
+            Routine
+          </Link>
+          <Link href="/questions" onClick={() => setMobileMenuOpen(false)}>
+            Questions
+          </Link>
+          {user && (
+            <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>
+              Dashboard
+            </Link>
+          )}
+          {user?.role === "admin" && (
+            <Link href="/admin" onClick={() => setMobileMenuOpen(false)}>
+              Admin
+            </Link>
+          )}
           {!loading && user && (
             <button onClick={handleLogout} className="btn">
               Logout
