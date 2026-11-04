@@ -59,17 +59,11 @@ export function AdminPanel({ adminEmail }: { adminEmail: string }) {
   }, [activeTab]);
 
   useEffect(() => {
-    let cancelled = false;
-
     const load = async () => {
       await loadData();
-      if (cancelled) return;
     };
 
     void load();
-    return () => {
-      cancelled = true;
-    };
   }, [loadData]);
 
   async function updateUserRole(userId: string, newRole: "admin" | "user") {
